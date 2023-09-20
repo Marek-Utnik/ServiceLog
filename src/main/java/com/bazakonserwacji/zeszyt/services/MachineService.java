@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bazakonserwacji.zeszyt.exceptions.MachineNotFoundException;
-import com.bazakonserwacji.zeszyt.models.Company;
 import com.bazakonserwacji.zeszyt.models.Machine;
 import com.bazakonserwacji.zeszyt.repositories.MachineRepository;
 

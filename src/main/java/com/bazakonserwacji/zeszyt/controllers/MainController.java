@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bazakonserwacji.zeszyt.models.SystemUser;
 import com.bazakonserwacji.zeszyt.services.SystemUserService;
@@ -24,7 +25,7 @@ public class MainController {
       this.systemUserService = systemUserService;
   }
   
-  @GetMapping("/")
+  @RequestMapping("/")
   public String index() {
     return "index";
   }

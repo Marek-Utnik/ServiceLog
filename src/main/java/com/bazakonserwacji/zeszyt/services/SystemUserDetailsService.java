@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.bazakonserwacji.zeszyt.models.Authority;
 import com.bazakonserwacji.zeszyt.models.Company;
 import com.bazakonserwacji.zeszyt.models.SystemUser;
-import com.bazakonserwacji.zeszyt.repositories.CompanyRepository;
 import com.bazakonserwacji.zeszyt.repositories.SystemUserRepository;
 
 import jakarta.transaction.Transactional;
@@ -24,13 +23,10 @@ import java.util.Set;
 public class SystemUserDetailsService implements UserDetailsService {
 
     private final SystemUserRepository systemUserRepository;
-    private final CompanyRepository companyRepository;
 
 
-    public SystemUserDetailsService(SystemUserRepository systemUserRepository,
-    								CompanyRepository companyRepository) {
+    public SystemUserDetailsService(SystemUserRepository systemUserRepository) {
         this.systemUserRepository = systemUserRepository;
-        this.companyRepository = companyRepository;
     }
 
     @Override

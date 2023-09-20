@@ -3,7 +3,6 @@ package com.bazakonserwacji.zeszyt.models;
 import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

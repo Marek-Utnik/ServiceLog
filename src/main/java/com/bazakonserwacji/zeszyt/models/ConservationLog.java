@@ -1,7 +1,6 @@
 package com.bazakonserwacji.zeszyt.models;
 
 import java.util.Date;
-import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
 

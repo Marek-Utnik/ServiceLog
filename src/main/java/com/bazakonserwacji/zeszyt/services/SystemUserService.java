@@ -22,11 +22,11 @@ public class SystemUserService {
     private final AuthorityRepository authorityRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Value("${my.admin.username}")
-    private String myAdminUsername;
+    //@Value("${my.admin.username}")
+    private String myAdminUsername = "admin2";
 
-    @Value("${my.admin.password}")
-    private String myAdminPassword;
+    //@Value("${my.admin.password}")
+    private String myAdminPassword ="admin2";
 
     public SystemUserService(SystemUserRepository systemUserRepository, AuthorityRepository authorityRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.systemUserRepository = systemUserRepository;

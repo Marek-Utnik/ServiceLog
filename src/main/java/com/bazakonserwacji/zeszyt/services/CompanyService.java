@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bazakonserwacji.zeszyt.exceptions.CompanyNotFoundException;
 import com.bazakonserwacji.zeszyt.models.Company;
-import com.bazakonserwacji.zeszyt.models.Machine;
 import com.bazakonserwacji.zeszyt.repositories.CompanyRepository;
 
 @Service

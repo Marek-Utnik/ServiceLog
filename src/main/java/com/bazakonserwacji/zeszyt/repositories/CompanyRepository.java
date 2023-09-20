@@ -10,6 +10,6 @@ import com.bazakonserwacji.zeszyt.models.Company;
 
 @Repository
 public interface CompanyRepository  extends JpaRepository<Company, Long>{
-	Company findByCompanyName(String companyName);
+	Optional <Company> findByCompanyName(String companyName);
 
 }
