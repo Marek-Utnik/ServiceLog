@@ -19,24 +19,24 @@
 		 <span th:text="${comment}"></span>
 	 </h4>
       
-<div style="width: 500px; margin-top: 5px" class="container text-center">
-<form th:action="@{/login}" method="post">
-<h1 th:text="#{login.label}"/> 
- <div class="mb-3">
-	 <label for="username"> </label>
-	 <input id="username" type="text" name="username" class="form-control"/>
-</div>
+	<div style="width: 500px; margin-top: 5px" class="container text-center">
+		<form th:action="@{/login}" method="post">
+			<h1 th:text="#{login.label}"/> 
+ 			<div class="mb-3">
+	 			<label for="username"> </label>
+	 			<input id="username" type="text" name="username" class="form-control"/>
+			</div>
 
- <div class="mb-3">
-	 <label for="password"> </label>
-<input id="password" type="password" name="password" class="form-control"/>
-</div>
-<button type="submit" class="btn btn-success" th:text="#{login.label}"></button>
-</form>
-</div>
-<div th:if="${param.error}" class="alert alert-danger">
-<span th:text="#{login.error}"></span>
-</div>
+ 			<div class="mb-3">
+				<label for="password"> </label>
+				<input id="password" type="password" name="password" class="form-control"/>
+			</div>
+			<button type="submit" class="btn btn-success" th:text="#{login.label}"></button>
+		</form>
+	</div>
+	<div th:if="${param.error}" class="alert alert-danger">
+		<span th:text="#{login.error}"></span>
+	</div>
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

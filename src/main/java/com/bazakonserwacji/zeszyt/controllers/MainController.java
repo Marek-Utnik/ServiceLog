@@ -13,11 +13,7 @@ import com.bazakonserwacji.zeszyt.services.SystemUserService;
 
 @Controller
 public class MainController {
-	
 
-  private static final String REDIRECT_TO_LOGIN = "redirect:/login";
-  private static final String REDIRECT_TO_ERROR = "redirect:/error";
-  private static final String REDIRECT_TO_CONTACT = "redirect:/contact";
   
   private final SystemUserService systemUserService;
 

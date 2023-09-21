@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.bazakonserwacji.zeszyt.models.Company;
+import com.bazakonserwacji.zeszyt.models.SystemUser;
 
 @Repository
 public interface CompanyRepository  extends JpaRepository<Company, Long>{
