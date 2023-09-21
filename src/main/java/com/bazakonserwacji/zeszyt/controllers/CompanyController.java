@@ -46,6 +46,7 @@ public class CompanyController extends LoggedControllerSuper{
 	              @PathVariable("companyActive") Long companyActive,
 	              @ModelAttribute("companies") List<Company> companies,
            		  Authentication authentication) {
+ 		  
         	
         	Company company = companyService.findCompanyById(companyActive);
         	if (companies.contains(company))
