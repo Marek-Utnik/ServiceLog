@@ -26,7 +26,7 @@
                     Companies
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            		<a th:each="company: ${companies}" class="dropdown-item" th:href="@{|/machine/list/${company.companyId}/1|}" th:text="${company.companyName}">Company Name</a>
+            		<a th:each="company: ${companies}" class="dropdown-item" th:href="@{|/machine/list/${company.companyId}|}" th:text="${company.companyName}">Company Name</a>
                 </div>
             </li>
         </ul>

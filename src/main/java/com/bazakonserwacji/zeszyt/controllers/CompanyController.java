@@ -71,7 +71,7 @@ public class CompanyController extends LoggedControllerSuper{
 			if (systemUser.getCompanies().contains(company))
         	{
         		machineRepository.save(machine);
-    			return "redirect:/machine/list/"+company.getCompanyId()+"/1";
+    			return "redirect:/machine/list/"+company.getCompanyId();
 
         	}
         	
@@ -105,7 +105,7 @@ public class CompanyController extends LoggedControllerSuper{
 			if (companies.contains(company))
         	{
         		machineRepository.save(machine);
-    			return "redirect:/machine/list/"+company.getCompanyId()+"/1";
+    			return "redirect:/machine/list/"+company.getCompanyId();
 
         	}
         	
@@ -124,7 +124,7 @@ public class CompanyController extends LoggedControllerSuper{
         	if (companies.contains(company))
         	{
      		  	machineRepository.delete(machine);
-    			return "redirect:/machine/list/"+company.getCompanyId()+"/1";
+    			return "redirect:/machine/list/"+company.getCompanyId();
 
         	}
         	
