@@ -11,17 +11,20 @@ import java.util.stream.IntStream;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bazakonserwacji.zeszyt.enums.AuthorityName;
 import com.bazakonserwacji.zeszyt.form.AuthorityForm;
 import com.bazakonserwacji.zeszyt.models.Authority;
 import com.bazakonserwacji.zeszyt.models.Company;
+import com.bazakonserwacji.zeszyt.models.Machine;
 import com.bazakonserwacji.zeszyt.models.SystemUser;
 import com.bazakonserwacji.zeszyt.repositories.AuthorityRepository;
 import com.bazakonserwacji.zeszyt.repositories.CompanyRepository;
@@ -35,8 +38,8 @@ import com.bazakonserwacji.zeszyt.services.SystemUserService;
 public class AdminController extends LoggedControllerSuper{
 
 
-	  private static final String REDIRECT_TO_COMPANY_LIST = "redirect:/admin/company/list/1";
-	  private static final String REDIRECT_TO_USER_LIST = "redirect:/admin/user/list/1";
+	  private static final String REDIRECT_TO_COMPANY_LIST = "redirect:/admin/company/list";
+	  private static final String REDIRECT_TO_USER_LIST = "redirect:/admin/user/list";
 
       private final CompanyRepository companyRepository;
       private final CompanyService companyService;
@@ -67,21 +70,26 @@ public class AdminController extends LoggedControllerSuper{
 			return "admin/admin-menu";
 	  }
  	  
- 	  @RequestMapping("/company/list/{page}")
+ 	  @RequestMapping("/company/list")
 	  public String getCompanyList(Model model,
               @SortDefault("companyId") Pageable pageable,
-              @PathVariable("page") int page
+              @RequestParam(value = "page", defaultValue="1", required = false) int page,
+	          @RequestParam(value = "companyId", required = false) Long companyId,
+	          @RequestParam(value = "companyName", required = false) String companyName,
+	          @RequestParam(value = "companyAddress", required = false) String companyAddress,
+              Sort sort
 			  ) {
  		  
- 		pageable = PageRequest.of(page-1, 2);
- 		Page<Company> companiesPaged = companyRepository.findAll(pageable);
-     	int totalPages = companiesPaged.getTotalPages();
 
-     	if(totalPages > 0) {
-     		List<Integer> pageNumbers = IntStream.rangeClosed(1,totalPages).boxed().collect(Collectors.toList());
-     		model.addAttribute("pageNumbers", pageNumbers);
-     	}
-         model.addAttribute("companiesPaged", companiesPaged); 		  
+    	pageable = PageRequest.of(page-1,4,sort);
+        Page <Company> companiesPaged = companyService.filteredCompany(pageable, companyId,companyName,companyAddress);
+        int totalPages = companiesPaged.getTotalPages();
+    	if(totalPages > 0) {
+    		List<Integer> pageNumbers = IntStream.rangeClosed(1,totalPages).boxed().collect(Collectors.toList());
+    		model.addAttribute("pageNumbers", pageNumbers);
+    	}
+    	
+        model.addAttribute("companiesPaged", companiesPaged); 		  
  		  
          	return "admin/company-list";
 	  }
@@ -122,21 +130,26 @@ public class AdminController extends LoggedControllerSuper{
 			return REDIRECT_TO_COMPANY_LIST;
 	  }
  	  
- 	  @RequestMapping("/user/list/{page}")
+ 	  @RequestMapping("/user/list")
 	  public String getUserList(Model model,
               @SortDefault("systemUserId") Pageable pageable,
-              @PathVariable("page") int page
+              @RequestParam(value = "page", defaultValue="1", required = false) int page,
+	          @RequestParam(value = "systemUserId", required = false) Long systemUserId,
+	          @RequestParam(value = "username", required = false) String username,
+	          @RequestParam(value = "name", required = false) String name,
+	          @RequestParam(value = "surname", required = false) String surname,
+              Sort sort
 			  ) {
  		  
- 		pageable = PageRequest.of(page-1, 2);
- 		Page<SystemUser> systemUsersPaged = systemUserRepository.findAll(pageable);
-     	int totalPages = systemUsersPaged.getTotalPages();
+ 	    	pageable = PageRequest.of(page-1,4,sort);
+ 	        Page <SystemUser> systemUsersPaged = systemUserService.filteredSystemUser(pageable, systemUserId,username,name,surname);
+ 	     	int totalPages = systemUsersPaged.getTotalPages();
+ 	    	if(totalPages > 0) {
+ 	    		List<Integer> pageNumbers = IntStream.rangeClosed(1,totalPages).boxed().collect(Collectors.toList());
+ 	    		model.addAttribute("pageNumbers", pageNumbers);
+ 	    	}
 
-     	if(totalPages > 0) {
-     		List<Integer> pageNumbers = IntStream.rangeClosed(1,totalPages).boxed().collect(Collectors.toList());
-     		model.addAttribute("pageNumbers", pageNumbers);
-     	}
-         model.addAttribute("systemUsersPaged", systemUsersPaged); 		  
+ 	    	model.addAttribute("systemUsersPaged", systemUsersPaged); 		  
  		  
          	return "admin/user-list";
 	  }
@@ -237,17 +250,28 @@ public class AdminController extends LoggedControllerSuper{
  	  
  	  @RequestMapping("/user/company/{systemUserId}")
 	  public String companyUserList(Model model,
-			  @PathVariable("systemUserId") Long systemUserId
+			  @PathVariable("systemUserId") Long systemUserId,
+              @SortDefault("companyId") Pageable pageable,
+              @RequestParam(value = "page", defaultValue="1", required = false) int page,
+	          @RequestParam(value = "companyId", required = false) Long companyId,
+	          @RequestParam(value = "companyName", required = false) String companyName,
+	          @RequestParam(value = "companyAddress", required = false) String companyAddress,
+              Sort sort
 			  			) {
 
 		  	SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
-	 		Set <Company> userCompanies = systemUser.getCompanies();
-	 		List<String> userCompaniesList = new ArrayList<>();
-	 		for (Company userCompany : userCompanies) {
-	 			userCompaniesList.add(userCompany.getCompanyName());
-	 		}
-	 		model.addAttribute("userCompaniesList", userCompaniesList);
 	 		model.addAttribute("systemUserId", systemUserId);
+	 		
+        	pageable = PageRequest.of(page-1,4,sort);
+            Page <Company> companiesPaged = companyService.filteredCompany(pageable, companyId,companyName,companyAddress);
+            int totalPages = companiesPaged.getTotalPages();
+        	if(totalPages > 0) {
+        		List<Integer> pageNumbers = IntStream.rangeClosed(1,totalPages).boxed().collect(Collectors.toList());
+        		model.addAttribute("pageNumbers", pageNumbers);
+        	}
+	 		model.addAttribute("companiesPaged", companiesPaged);
+	 		List <Long> userCompaniesList = systemUser.getCompanies().stream().map(c->c.getCompanyId()).collect(Collectors.toList());
+	 		model.addAttribute("userCompaniesList", userCompaniesList);
 
 
 		  	
