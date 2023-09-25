@@ -10,10 +10,11 @@
 <nav th:insert="fragments/navbar-company :: navbar-company"></nav>
 <div class="container text-center">
     <h1>Edit System User</h1>
-    <form th:action="@{|../save|}" th:object="${systemUser}" method="post">
+    <form th:action="@{save}" th:object="${systemUser}" method="post">
         <div class="mb-3">
             <label for="username">Username: </label>
-            <input type="text" class="form-control" id="username" th:field="*{username}"/>
+            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('username') ? 'is-invalid' : ''}" id="username" th:field="*{username}"/>
+        	<small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></small>
         </div>
         <div class="mb-3">
             <label for="name">Name: </label>

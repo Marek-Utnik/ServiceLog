@@ -4,12 +4,15 @@ import java.util.Set;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.bazakonserwacji.zeszyt.validators.UniqueUsername;
+import com.bazakonserwacji.zeszyt.validators.ValidPasswords;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-
+@UniqueUsername
+@ValidPasswords
 @Entity
 @NoArgsConstructor
 @Getter
@@ -26,6 +29,9 @@ public class SystemUser{
 	
 	@Column(nullable = false)
 	private String password;
+	
+	@Transient
+	String repeatedPassword;
 
 	@Column(nullable = false)
 	private String name;

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.Errors;
 
 import com.bazakonserwacji.zeszyt.models.Company;
 import com.bazakonserwacji.zeszyt.models.Machine;
@@ -16,6 +17,8 @@ import com.bazakonserwacji.zeszyt.repositories.MachineRepository;
 import com.bazakonserwacji.zeszyt.repositories.SystemUserRepository;
 import com.bazakonserwacji.zeszyt.services.CompanyService;
 import com.bazakonserwacji.zeszyt.services.MachineService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/company")
@@ -59,11 +62,17 @@ public class CompanyController extends LoggedControllerSuper{
         	
 			return "error";
 	  }
- 	  @RequestMapping("/{companyActive}/machine/save")
+ 	  @RequestMapping("/{companyActive}/machine/add/save")
 	  public String companyAddMachine(Model model,
-			  		@ModelAttribute Machine machine,
+			  @Valid Machine machine,
+			  		Errors errors,
            		  Authentication authentication) {
-	  		
+	  		System.out.println(errors);
+ 		  	if (errors.hasErrors()) {
+        		model.addAttribute("machine", machine);
+ 		  		return "company/machine-add";
+ 			}
+ 		  
 	  		String systemUserName = authentication.getName();
     		SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);
         	
@@ -95,12 +104,19 @@ public class CompanyController extends LoggedControllerSuper{
 			return "error";
 	  }
  	  
- 	  @RequestMapping("/machine/update")
+ 	  @RequestMapping("/machine/edit/update")
 	  public String companyUpdateMachine(Model model,
-			  		@ModelAttribute Machine machine,
 			  		@ModelAttribute("companies") List<Company> companies,
-           		  Authentication authentication) {
+           		  Authentication authentication,
+    			  @Valid Machine machine,
+			  		Errors errors) {
         	
+ 		  
+		  	if (errors.hasErrors()) {
+        		model.addAttribute("machine", machine);
+ 		  		return "company/machine-edit";
+ 			}
+		  	
         	Company company = machine.getCompany();
 			if (companies.contains(company))
         	{

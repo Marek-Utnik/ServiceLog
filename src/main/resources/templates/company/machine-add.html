@@ -10,7 +10,7 @@
 <nav th:insert="fragments/navbar-main :: navbar-main"></nav>
 <div style="width: 500px; margin-top: 5px" class="container text-center">
     <h1>Fill machine data</h1>
-    <form th:action="@{../save}" th:object="${machine}" method="post">
+    <form th:action="@{save}" th:object="${machine}" method="post">
         <div class="mb-3">
             <label for="registrationNumber">Registraition number: </label>
             <input type="number" class="form-control" id="registrationNumber" th:field="*{registrationNumber}"/>
@@ -21,12 +21,14 @@
         </div>
         <div class="mb-3">
             <label for="producerName">Producer name: </label>
-            <input type="text" class="form-control" id="producerName" th:field="*{producerName}"/>
+            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('producerName') ? 'is-invalid' : ''}" id="producerName" th:field="*{producerName}"/>
+        	<small th:if="${#fields.hasErrors('producerName')}" th:errors="*{producerName}" class="text-danger"></small>
         </div>
         <div class="mb-3">
             <label for="machineType">Machine type: </label>
-            <input type="text" class="form-control" id="machineType" th:field="*{machineType}"/>
-        </div>
+            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('machineType') ? 'is-invalid' : ''}" id="machineType" th:field="*{machineType}"/>
+        	<small th:if="${#fields.hasErrors('machineType')}" th:errors="*{machineType}" class="text-danger"></small>
+       </div>
         <input type="hidden" th:field="*{company}">
 
         <button type="submit" class="btn btn-success">Add machine</button>

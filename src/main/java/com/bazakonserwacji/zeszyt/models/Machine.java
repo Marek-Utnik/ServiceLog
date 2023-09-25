@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
@@ -22,9 +23,15 @@ public class Machine{
 	@GenericGenerator(name = "native",strategy = "native")
 	private Long machineId;
 	
+	
 	private int registrationNumber;
+	
 	private int serialNumber;
+	
+	@NotBlank(message="Producer Name is required")
 	private String producerName;
+	
+	@NotBlank
 	private String machineType;
 	
 	@ManyToOne

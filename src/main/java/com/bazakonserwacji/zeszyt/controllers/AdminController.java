@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,8 @@ import com.bazakonserwacji.zeszyt.repositories.CompanyRepository;
 import com.bazakonserwacji.zeszyt.repositories.SystemUserRepository;
 import com.bazakonserwacji.zeszyt.services.CompanyService;
 import com.bazakonserwacji.zeszyt.services.SystemUserService;
+
+import jakarta.validation.Valid;
 
 
 @Controller
@@ -158,14 +161,20 @@ public class AdminController extends LoggedControllerSuper{
 	  public String editUserForm(Model model,
 			  @PathVariable("systemUserId") Long systemUserId
 			  ) {
+
 	 		SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
 	 	    model.addAttribute("systemUser", systemUser);
 			return "admin/user-edit";
 	  }
  	  
- 	  @RequestMapping("/user/save")
+ 	  @RequestMapping("/user/edit/save")
 	  public String saveUser(Model model,
-			  					@ModelAttribute SystemUser systemUser) {
+			  		    	  @Valid SystemUser systemUser,
+			  			  	  Errors errors) {
+	  		if (errors.hasErrors()) {
+	  			model.addAttribute(systemUser);
+	  			return "admin/user-edit";
+	  		}
  		  	SystemUser systemUserToSave= systemUserService.findSystemUserById(systemUser.getSystemUserId());
  		  	systemUserToSave.setUsername(systemUser.getUsername());
  		  	systemUserToSave.setName(systemUser.getName());
@@ -182,10 +191,14 @@ public class AdminController extends LoggedControllerSuper{
 			return "admin/user-password";
 	  }
  	  
- 	  @RequestMapping("/user/passwordSave")
+ 	  @RequestMapping("/user/password/passwordSave")
 	  public String passwordUserForm(Model model,
-			  @ModelAttribute SystemUser systemUser
-			  ) {
+	    	  @Valid SystemUser systemUser,
+		  	  Errors errors) {
+ 		  	if (errors.hasErrors()) {
+ 		  		model.addAttribute(systemUser);
+ 		  		return "admin/user-password";
+ 		  	}
 	    	systemUserService.saveSystemUser(systemUser);
 			return REDIRECT_TO_USER_LIST;
 	  }

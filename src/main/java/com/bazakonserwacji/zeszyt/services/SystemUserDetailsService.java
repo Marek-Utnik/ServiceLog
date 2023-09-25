@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Transactional
 public class SystemUserDetailsService implements UserDetailsService {
 
     private final SystemUserRepository systemUserRepository;
@@ -30,7 +31,6 @@ public class SystemUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SystemUser systemUser = systemUserRepository.findByUsername(username);
         

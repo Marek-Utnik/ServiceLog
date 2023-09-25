@@ -13,11 +13,18 @@
     <form th:action="@{new-user}" th:object="${systemUser}" method="post">
         <div class="mb-3">
             <label for="username">Username: </label>
-            <input type="text" class="form-control" id="username" th:field="*{username}"/>
+            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('username') ? 'is-invalid' : ''}" id="username" th:field="*{username}"/>
+        	<small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></small>
         </div>
         <div class="mb-3">
             <label for="password">Password: </label>
-            <input type="password" class="form-control" id="password" th:field="*{password}"/>
+            <input type="password" th:class="'form-control ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}" id="password" th:field="*{password}"/>
+            <small class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+        </div>
+        <div class="mb-3">
+            <label for="repeatedPassword">Repeated Password: </label>
+            <input type="password" th:class="'form-control ' + ${#fields.hasErrors('repeatedPassword') ? 'is-invalid' : ''}" id="repeatedPassword" th:field="*{repeatedPassword}"/>
+            <small class="text-danger" th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}"></small>
         </div>
         <div class="mb-3">
             <label for="name">Name: </label>
