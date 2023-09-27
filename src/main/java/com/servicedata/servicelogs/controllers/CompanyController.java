@@ -29,123 +29,96 @@ public class CompanyController extends LoggedControllerSuper{
     private final MachineRepository machineRepository;
     private final MachineService machineService;
 
-
     public CompanyController(
-			  CompanyService companyService,
-			  SystemUserRepository systemUserRepository,
-		      MachineRepository machineRepository,
-		      MachineService machineService
-			  ) {
+    		CompanyService companyService,
+			SystemUserRepository systemUserRepository,
+		    MachineRepository machineRepository,
+		    MachineService machineService) {
     	super(companyService);
   		this.companyService = companyService;
   		this.systemUserRepository = systemUserRepository;
   		this.machineRepository = machineRepository;
   		this.machineService = machineService;
-  		}
+  	}
     
-
- 	  @RequestMapping("/{companyActive}/machine/add/")
-	  public String companyAddMachineForm(Model model,
-	              @PathVariable("companyActive") Long companyActive,
-	              @ModelAttribute("companies") List<Company> companies,
-           		  Authentication authentication) {
- 		  
-        	
-        	Company company = companyService.findCompanyById(companyActive);
-        	if (companies.contains(company))
-        	{
-        		Machine machine = new Machine();
-        		machine.setCompany(company);
-        		model.addAttribute("machine", machine);
-    			return "company/machine-add";
-        	}
-        	
-			return "error";
-	  }
- 	  @RequestMapping("/{companyActive}/machine/add/save")
-	  public String companyAddMachine(Model model,
-			  @Valid Machine machine,
-			  		Errors errors,
-           		  Authentication authentication) {
-	  		System.out.println(errors);
- 		  	if (errors.hasErrors()) {
-        		model.addAttribute("machine", machine);
- 		  		return "company/machine-add";
- 			}
- 		  
-	  		String systemUserName = authentication.getName();
-    		SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);
-        	
-        	Company company = machine.getCompany();
-			if (systemUser.getCompanies().contains(company))
-        	{
-        		machineRepository.save(machine);
-    			return "redirect:/machine/list/"+company.getCompanyId();
-
-        	}
-        	
-			return "error";
-	  }
+ 	@RequestMapping("/{companyActive}/machine/add/")
+	public String companyAddMachineForm(Model model,
+			@PathVariable("companyActive") Long companyActive,
+	        @ModelAttribute("companies") List<Company> companies,
+           	Authentication authentication) {
+ 		Company company = companyService.findCompanyById(companyActive);
+        if (companies.contains(company)) {
+        	Machine machine = new Machine();
+        	machine.setCompany(company);
+        	model.addAttribute("machine", machine);
+    		return "company/machine-add";
+        }
+		return "error";
+	}
+ 	
+ 	@RequestMapping("/{companyActive}/machine/add/save")
+	public String companyAddMachine(Model model,
+			@Valid Machine machine,
+			Errors errors,
+           	Authentication authentication) {
+	  	System.out.println(errors);
+ 		if (errors.hasErrors()) {
+ 			model.addAttribute("machine", machine);
+ 		  	return "company/machine-add";
+ 		}
+ 		String systemUserName = authentication.getName();
+    	SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);
+        Company company = machine.getCompany();
+		if (systemUser.getCompanies().contains(company)) {
+        	machineRepository.save(machine);
+    		return "redirect:/machine/list/"+company.getCompanyId();
+       	}       	
+		return "error";
+	}
  	  
- 	  @RequestMapping("/machine/edit/{machineId}")
-	  public String companyEditMachine(Model model,
-              			@PathVariable("machineId") Long machineId,
-              			@ModelAttribute("companies") List<Company> companies,
-              			Authentication authentication) {
-        	
-        	Machine machine = machineService.findMachineById(machineId);
-        	if (companies.contains(machine.getCompany()))
-        	{
-        		model.addAttribute("machine", machine);
-    			return "company/machine-edit";
-        	}
-        	
-        	
-			return "error";
-	  }
+ 	@RequestMapping("/machine/edit/{machineId}")
+	public String companyEditMachine(Model model,
+			@PathVariable("machineId") Long machineId,
+            @ModelAttribute("companies") List<Company> companies,
+            Authentication authentication) {
+        Machine machine = machineService.findMachineById(machineId);
+        if (companies.contains(machine.getCompany())) {
+        	model.addAttribute("machine", machine);
+    		return "company/machine-edit";
+        }	
+		return "error";
+	}
  	  
- 	  @RequestMapping("/machine/edit/update")
-	  public String companyUpdateMachine(Model model,
-			  		@ModelAttribute("companies") List<Company> companies,
-           		  Authentication authentication,
-    			  @Valid Machine machine,
-			  		Errors errors) {
-        	
- 		  
-		  	if (errors.hasErrors()) {
-        		model.addAttribute("machine", machine);
- 		  		return "company/machine-edit";
- 			}
-		  	
-        	Company company = machine.getCompany();
-			if (companies.contains(company))
-        	{
-        		machineRepository.save(machine);
-    			return "redirect:/machine/list/"+company.getCompanyId();
-
-        	}
-        	
-			return "error";
-	  }
+ 	@RequestMapping("/machine/edit/update")
+	public String companyUpdateMachine(Model model,
+			@ModelAttribute("companies") List<Company> companies,
+           	Authentication authentication,
+    		@Valid Machine machine,
+			Errors errors) {
+		if (errors.hasErrors()) {
+        	model.addAttribute("machine", machine);
+ 			return "company/machine-edit";
+		}	  	
+        Company company = machine.getCompany();
+		if (companies.contains(company)) {
+        	machineRepository.save(machine);
+    		return "redirect:/machine/list/"+company.getCompanyId();
+       	}        	
+		return "error";
+	}
  	  
- 	  @RequestMapping("/machine/delete/{machineId}")
-	  public String companyDeleteMachine(Model model,
-              			@PathVariable("machineId") Long machineId,
-              			@ModelAttribute("companies") List<Company> companies,
-              			Authentication authentication) {
-	  		
-        	
-        	Machine machine = machineService.findMachineById(machineId);
-        	Company company = machine.getCompany();
-        	if (companies.contains(company))
-        	{
-     		  	machineRepository.delete(machine);
-    			return "redirect:/machine/list/"+company.getCompanyId();
-
-        	}
-        	
-			return "error";
-	  }
-
+ 	@RequestMapping("/machine/delete/{machineId}")
+	public String companyDeleteMachine(Model model,
+			@PathVariable("machineId") Long machineId,
+            @ModelAttribute("companies") List<Company> companies,
+            Authentication authentication) {  	
+        Machine machine = machineService.findMachineById(machineId);
+        Company company = machine.getCompany();
+        if (companies.contains(company)) {
+     		machineRepository.delete(machine);
+    		return "redirect:/machine/list/"+company.getCompanyId();
+       	}
+   		return "error";
+	}
 
 }

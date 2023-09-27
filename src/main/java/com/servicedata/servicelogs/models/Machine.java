@@ -10,11 +10,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 public class Machine{
 	

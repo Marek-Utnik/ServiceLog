@@ -5,14 +5,10 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Company{
@@ -22,6 +18,7 @@ public class Company{
 	private Long companyId;
 	
 	private String companyName;
+	
 	private String companyAddress;
 	
 	@OneToMany(mappedBy = "company")
@@ -31,9 +28,8 @@ public class Company{
     @ManyToMany(mappedBy = "companies")
     private Set<SystemUser> systemUsers;
 	
-	
 	public Company(String companyName, 
-				   String companyAddress) {
+			String companyAddress) {
 		this.companyName = companyName;
 		this.companyAddress = companyAddress;
 	}

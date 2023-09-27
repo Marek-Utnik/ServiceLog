@@ -1,6 +1,6 @@
 package com.servicedata.servicelogs.models;
 
-import java.util.Date;
+import java.time.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -12,15 +12,13 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class ConservationLog{
 	
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	private Long conservationLogId;
-	
 	
 	@ManyToOne
 	@JoinColumn(name = "system_user_id", nullable = false)
@@ -37,6 +35,6 @@ public class ConservationLog{
 	private String conservationDescription;
 	
     @Temporal(TemporalType.DATE)
-    Date publicationDate;
+    LocalDate publicationDate;
 	
 }

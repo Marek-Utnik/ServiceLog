@@ -11,8 +11,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 public class Authority{
 

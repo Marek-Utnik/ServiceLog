@@ -43,13 +43,13 @@ public class SystemUser{
 	@JoinTable(name = "systemuser_companies",
 			   joinColumns = @JoinColumn(name = "system_user_id"),
 			   inverseJoinColumns = @JoinColumn(name = "company_id"))
-	Set<Company> companies;
+	private Set<Company> companies;
 	
 	@ManyToMany(cascade=CascadeType.MERGE)
 	@JoinTable(name = "systemuser_authorities",
 			   joinColumns = @JoinColumn(name = "system_user_id"),
 			   inverseJoinColumns = @JoinColumn(name = "authority_id"))
-	Set<Authority> authorities;
+	private Set<Authority> authorities;
 	
 
 	@OneToMany(mappedBy = "systemUser")

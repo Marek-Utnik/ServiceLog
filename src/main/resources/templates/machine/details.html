@@ -102,7 +102,7 @@
     <tbody>
     <tr th:each="log: ${logs}">
         <td th:text="${log.systemUser.systemUserId}">System User Id</td>
-        <td th:text="${#dates.format(log.publicationDate,'dd-MM-yyyy' )}">Date</td>
+        <td th:text="${#temporals.format(log.publicationDate, 'dd-MM-yyyy')}">Date</td>
         <td th:text="${log.conservationDescription}">Work done</td>
     </tr>
     </tbody>

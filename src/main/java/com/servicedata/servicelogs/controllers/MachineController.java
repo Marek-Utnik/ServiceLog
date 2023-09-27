@@ -1,12 +1,11 @@
 package com.servicedata.servicelogs.controllers;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,54 +32,45 @@ import com.servicedata.servicelogs.services.MachineService;
 @Controller
 @RequestMapping("/machine")
 public class MachineController extends LoggedControllerSuper{
-    private final MachineService machineService;
+    
+	private final MachineService machineService;
     private final CompanyService companyService;
-
     private final ConservationLogService conservationLogService;
 
-    
 	public MachineController(MachineService machineService,
 							CompanyService companyService,
-							ConservationLogService conservationLogService
-			) {
+							ConservationLogService conservationLogService) {
 		super(companyService);
 		this.companyService = companyService;
 		this.machineService = machineService;
 		this.conservationLogService = conservationLogService;
 	}
 	
-
     @GetMapping("/list")
     public String getCompanyName(Model model,
-            				@SortDefault("machineId") Pageable pageable,
-            	            @RequestParam(value = "page", defaultValue="1", required = false) int page,
-                            Authentication authentication
-                            ) {
+    		@SortDefault("machineId") Pageable pageable,
+            @RequestParam(value = "page", defaultValue="1", required = false) int page,
+            Authentication authentication) {
         Page<Machine> machinesPaged = null;
         model.addAttribute("machines", machinesPaged);
-        
     	return "machine/list";
     }
     
     @GetMapping("/list/{companyId}")
     public String getAllMachines(Model model,
-                            @ModelAttribute("companies") List<Company> companies,
-                            @PathVariable("companyId") Long companyId,
-                            @RequestParam(value = "page", defaultValue="1", required = false) int page,
-                            @SortDefault("machineId") Pageable pageable,
-            	            @RequestParam(value = "machineId", required = false) Long machineId,
-            	            @RequestParam(value = "registrationNumber", required = false) Integer registrationNumber,
-            	            @RequestParam(value = "serialNumber", required = false) Integer serialNumber,
-            	            @RequestParam(value = "producerName", required = false) String producerName,
-            	            @RequestParam(value = "machineType", required = false) String machineType,
-                            Sort sort,
-                            Authentication authentication
-                            ) {
-
-        	
+            @ModelAttribute("companies") List<Company> companies,
+            @PathVariable("companyId") Long companyId,
+            @RequestParam(value = "page", defaultValue="1", required = false) int page,
+            @SortDefault("machineId") Pageable pageable,
+            @RequestParam(value = "machineId", required = false) Long machineId,
+            @RequestParam(value = "registrationNumber", required = false) Integer registrationNumber,
+            @RequestParam(value = "serialNumber", required = false) Integer serialNumber,
+            @RequestParam(value = "producerName", required = false) String producerName,
+            @RequestParam(value = "machineType", required = false) String machineType,
+            Sort sort,
+            Authentication authentication) {
         Company company = companyService.findCompanyById(companyId);
-        if (companies.contains(company))
-        {
+        if (companies.contains(company)) {
         	pageable = PageRequest.of(page-1,4,sort);
             Page <Machine> machinesPaged = machineService.filteredMachine(pageable, company,machineId,registrationNumber,serialNumber,producerName,machineType);
         	int totalPages = machinesPaged.getTotalPages();
@@ -92,8 +82,7 @@ public class MachineController extends LoggedControllerSuper{
             model.addAttribute("companyActive", companyId);
             return "machine/list";
         }
-        return "error";
-    	
+        return "error";	
     }
 
     @RequestMapping("/details/{machineId}")    
@@ -107,33 +96,27 @@ public class MachineController extends LoggedControllerSuper{
             @SortDefault("systemUserId") Pageable pageable,
             @RequestParam(value = "page", defaultValue="1", required = false) int page,
             Sort sort,
-            Authentication authentication
-            ) {
-    	
-    	Date publicationDateStart = null;
-    	Date publicationDateEnd = null;
-    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Authentication authentication) {
+    	LocalDate publicationDateStart = null;
+    	LocalDate publicationDateEnd = null;
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     	try {
     		if (pDStart!=null) {
     			if (!pDStart.isEmpty()) {
-    			publicationDateStart = df.parse(pDStart);
+    				publicationDateStart = LocalDate.parse(pDStart, formatter);
     			}
     		}
     		if (pDEnd!=null) {
     			if (!pDEnd.isEmpty()) {
-    			publicationDateEnd = df.parse(pDEnd);
+        			publicationDateEnd = LocalDate.parse(pDEnd, formatter);
     			}
     		}
     	}
-    	catch(ParseException e) {
+    	catch(DateTimeParseException e) {
     	    e.printStackTrace();
     	}
-
-
         Machine machine = machineService.findMachineById(machineId);
-        Company company = machine.getCompany();
-        
-        
+        Company company = machine.getCompany();     
         if (companies.contains(company))
         {
         	pageable = PageRequest.of(page-1,4,sort);
@@ -146,7 +129,6 @@ public class MachineController extends LoggedControllerSuper{
         	model.addAttribute("logs", logs);
         	model.addAttribute("machine", machine);
         	model.addAttribute("sort", sort);
-
         	return "machine/details";
         }
         return "error";	

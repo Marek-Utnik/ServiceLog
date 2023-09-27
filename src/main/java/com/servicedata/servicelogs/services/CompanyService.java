@@ -3,13 +3,12 @@
 package com.servicedata.servicelogs.services;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -89,14 +88,56 @@ public class CompanyService {
         if (companyAddressCheck) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.upper(companyRoot.get("companyAddress")), "%" + companyAddress.toUpperCase() + "%"));
         }
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), companyRoot, criteriaBuilder));
+        select.where(predicates.toArray(Predicate[]::new));
+        select.orderBy(QueryUtils.toOrders(pageable.getSort(), companyRoot, criteriaBuilder));
 
-        List <Company> filteredCompanies = entityManager.createQuery(criteriaQuery).getResultList();
+        List <Company> filteredCompanies = entityManager.createQuery(select).getResultList();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredCompanies.size());
         List<Company> pageContent = filteredCompanies.subList(start, end);        
-        Page <Company> page = new PageImpl(pageContent, pageable, filteredCompanies.size());
+        Page <Company> page = new PageImpl<Company>(pageContent, pageable, filteredCompanies.size());
         return page;
     }
+    
+    public Page<Company> filteredCompanyNew(Pageable pageable, 
+    		Long companyId, 
+    		String companyName,
+    		String companyAddress
+    		){
+        boolean companyIdCheck = companyId != null;
+        boolean companyNameCheck = companyName != null && !companyName.isBlank();
+        boolean companyAddressCheck = companyAddress != null && !companyAddress.isBlank();
+
+        //Obiekt budujący zapytanie do bazy
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        //Obiekt zapytania do bazy - jakie będą zwracane obiekty
+        CriteriaQuery<Company> criteriaQuery = criteriaBuilder.createQuery(Company.class);
+        //Gdzie będziemy szukać
+        Root<Company> companyRoot = criteriaQuery.from(Company.class);
+        //Określamy że to będzie select
+        CriteriaQuery<Company> select = criteriaQuery.select(companyRoot);
+        //Pusta lista warunków
+        List<Predicate> predicates = new ArrayList<>();
+        
+        if (companyIdCheck) {
+            predicates.add(criteriaBuilder.equal(companyRoot.get("companyId"), companyId));
+            Specification<Company> companyIdSpec = (Root<Company> root, CriteriaQuery<?> query, CriteriaBuilder builder) -> criteriaBuilder.equal(root.get("companyId"), companyId);
+        }
+        if (companyNameCheck) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(companyRoot.get("companyName")), "%" + companyName.toUpperCase() + "%"));
+        }
+        if (companyAddressCheck) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(companyRoot.get("companyAddress")), "%" + companyAddress.toUpperCase() + "%"));
+        }
+        select.where(predicates.toArray(Predicate[]::new));
+        select.orderBy(QueryUtils.toOrders(pageable.getSort(), companyRoot, criteriaBuilder));
+
+        List <Company> filteredCompanies = entityManager.createQuery(select).getResultList();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredCompanies.size());
+        List<Company> pageContent = filteredCompanies.subList(start, end);        
+        Page <Company> page = new PageImpl<Company>(pageContent, pageable, filteredCompanies.size());
+        return page;
+    }
+    
 }

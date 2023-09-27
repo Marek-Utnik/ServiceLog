@@ -13,11 +13,9 @@
 </head>
 <body>
 	<nav th:insert="fragments/navbar-main.html :: navbar-main"></nav>
-	   
     <h4> 
 		<span th:text="${comment}"></span>
 	</h4>
-      
 	<div style="width: 500px; margin-top: 5px" class="container text-center">
 		<form th:action="@{/login}" method="post">
 			<h1 th:text="#{login.label}"/> 

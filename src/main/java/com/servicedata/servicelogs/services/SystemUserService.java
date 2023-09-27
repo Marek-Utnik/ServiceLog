@@ -106,14 +106,14 @@ public class SystemUserService {
         if (surnameCheck) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.upper(systemUserRoot.get("surname")), "%" + surname.toUpperCase() + "%"));
         }
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), systemUserRoot, criteriaBuilder));
+        select.where(predicates.toArray(Predicate[]::new));
+        select.orderBy(QueryUtils.toOrders(pageable.getSort(), systemUserRoot, criteriaBuilder));
 
-        List <SystemUser> filteredSystemUser = entityManager.createQuery(criteriaQuery).getResultList();
+        List <SystemUser> filteredSystemUser = entityManager.createQuery(select).getResultList();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredSystemUser.size());
         List<SystemUser> pageContent = filteredSystemUser.subList(start, end);        
-        Page <SystemUser> page = new PageImpl(pageContent, pageable, filteredSystemUser.size());
+        Page <SystemUser> page = new PageImpl<SystemUser>(pageContent, pageable, filteredSystemUser.size());
         return page;
     }
     

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.servicedata.servicelogs.enums.AuthorityName;
 import com.servicedata.servicelogs.form.AuthorityForm;
 import com.servicedata.servicelogs.models.Authority;
@@ -27,6 +29,7 @@ import com.servicedata.servicelogs.repositories.CompanyRepository;
 import com.servicedata.servicelogs.repositories.SystemUserRepository;
 import com.servicedata.servicelogs.services.CompanyService;
 import com.servicedata.servicelogs.services.SystemUserService;
+
 import jakarta.validation.Valid;
 
 @Controller
@@ -46,8 +49,7 @@ public class AdminController extends LoggedControllerSuper{
 			CompanyService companyService,
 			SystemUserRepository systemUserRepository,
 			SystemUserService systemUserService,
-			AuthorityRepository authorityRepository
-			) {
+			AuthorityRepository authorityRepository) {
     	super(companyService);
     	this.companyRepository = companyRepository;
     	this.companyService = companyService;
@@ -56,9 +58,8 @@ public class AdminController extends LoggedControllerSuper{
     	this.authorityRepository = authorityRepository;
     }
 
-	
  	@RequestMapping("/admin-menu")
-	public String adminMenu(){
+	public String adminMenu() {
  		return "admin/admin-menu";
  	}
  	  
@@ -69,8 +70,7 @@ public class AdminController extends LoggedControllerSuper{
 	        @RequestParam(value = "companyId", required = false) Long companyId,
 	        @RequestParam(value = "companyName", required = false) String companyName,
 	        @RequestParam(value = "companyAddress", required = false) String companyAddress,
-            Sort sort
-			) {
+            Sort sort) {
     	pageable = PageRequest.of(page-1,4,sort);
         Page <Company> companiesPaged = companyService.filteredCompany(pageable, companyId,companyName,companyAddress);
         int totalPages = companiesPaged.getTotalPages();
@@ -85,8 +85,7 @@ public class AdminController extends LoggedControllerSuper{
  	  
  	@RequestMapping("/company/edit/{companyId}")
 	public String editCompanyForm(Model model,
-			@PathVariable("companyId") Long companyId
-			) {
+			@PathVariable("companyId") Long companyId) {
  		Company company = companyService.findCompanyById(companyId);
 	 	model.addAttribute("company", company);
 	 	return "admin/company-edit";
@@ -100,8 +99,7 @@ public class AdminController extends LoggedControllerSuper{
 	}
  	  
  	@RequestMapping("/company/save")
-	public String saveCompany(Model model,
-			@ModelAttribute Company company) {
+	public String saveCompany(@ModelAttribute Company company) {
  		companyRepository.save(company);
  		return REDIRECT_TO_COMPANY_LIST;
 	}
@@ -132,8 +130,7 @@ public class AdminController extends LoggedControllerSuper{
  	    	model.addAttribute("pageNumbers", pageNumbers);
  	    }
 
- 	    model.addAttribute("systemUsersPaged", systemUsersPaged); 		  
- 		  
+ 	    model.addAttribute("systemUsersPaged", systemUsersPaged); 		   		  
         return "admin/user-list";
  	}
  	  
@@ -194,30 +191,26 @@ public class AdminController extends LoggedControllerSuper{
  	@RequestMapping("/user/roles/{systemUserId}")
 	public String rolesUserForm(Model model,
     		@PathVariable("systemUserId") Long systemUserId) {
- 		  SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
- 		  AuthorityForm authorityForm = new AuthorityForm();
- 		  for (Authority authority:systemUser.getAuthorities()) {
- 			  if (authority.getName()==AuthorityName.ROLE_COMPANYUSER) {
- 				  authorityForm.setCompanyuser(true);
- 			  }
- 			  else if (authority.getName()==AuthorityName.ROLE_SERVICEMAN) {
- 				  authorityForm.setServiceman(true);
- 			  }
- 			  else if (authority.getName()==AuthorityName.ROLE_ADMIN){
- 				  authorityForm.setAdmin(true);}
- 		  	  }
- 		  authorityForm.setSystemUserId(systemUserId);
- 		  			
- 		  	
-		  model.addAttribute("authorityForm", authorityForm);
-
-		  return "admin/user-roles";
+ 		SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
+ 		AuthorityForm authorityForm = new AuthorityForm();
+ 		for (Authority authority:systemUser.getAuthorities()) {
+ 			if (authority.getName()==AuthorityName.ROLE_COMPANYUSER) {
+ 				authorityForm.setCompanyuser(true);
+ 			}
+ 			else if (authority.getName()==AuthorityName.ROLE_SERVICEMAN) {
+ 				authorityForm.setServiceman(true);
+ 			}
+ 			else if (authority.getName()==AuthorityName.ROLE_ADMIN){
+ 				authorityForm.setAdmin(true);
+ 			}
+ 		}
+ 		authorityForm.setSystemUserId(systemUserId);
+		model.addAttribute("authorityForm", authorityForm);
+		return "admin/user-roles";
  	}
  	  
- 	  
  	@RequestMapping("/user/rolesSave")
-	public String rolesUserSet(Model model,
-			@ModelAttribute AuthorityForm authorityForm) {
+	public String rolesUserSet(@ModelAttribute AuthorityForm authorityForm) {
  		SystemUser systemUserToSave= systemUserService.findSystemUserById(authorityForm.getSystemUserId());
 		HashSet <Authority> authorities = new HashSet<>();
 		if (authorityForm.getCompanyuser()==true) {
@@ -233,7 +226,6 @@ public class AdminController extends LoggedControllerSuper{
 	    systemUserRepository.save(systemUserToSave);		 	
 		return REDIRECT_TO_USER_LIST;
 	}
- 	  
  	  
  	@RequestMapping("/user/company/{systemUserId}")
 	public String companyUserList(Model model,
@@ -254,16 +246,16 @@ public class AdminController extends LoggedControllerSuper{
         	model.addAttribute("pageNumbers", pageNumbers);
         }
 	 	model.addAttribute("companiesPaged", companiesPaged);
+ 		System.out.println(systemUser.getCompanies());
 	 	List <Long> userCompaniesList = systemUser.getCompanies().stream().map(c->c.getCompanyId()).collect(Collectors.toList());
+ 		System.out.println(userCompaniesList);
 	 	model.addAttribute("userCompaniesList", userCompaniesList);	  	
 		return "admin/user-companies" ;
 	}
  	  
  	@RequestMapping("/user/company/add/{systemUserId}/{companyId}")
-	public String companyUserSet(Model model,
-			@PathVariable("systemUserId") Long systemUserId,
+	public String companyUserSet(@PathVariable("systemUserId") Long systemUserId,
 			@PathVariable("companyId") Long companyId) {
-	 		
  		SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
 	 	Set <Company> userCompanies = systemUser.getCompanies();
 	 	userCompanies.add(companyService.findCompanyById(companyId));
@@ -273,8 +265,7 @@ public class AdminController extends LoggedControllerSuper{
 	} 	
  	  
  	@RequestMapping("/user/company/delete/{systemUserId}/{companyId}")
-	public String companyUserDelete(Model model,
-			@PathVariable("systemUserId") Long systemUserId,
+	public String companyUserDelete(@PathVariable("systemUserId") Long systemUserId,
 			@PathVariable("companyId") Long companyId) {
 	 	SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
 	 	Set <Company> userCompanies = systemUser.getCompanies();

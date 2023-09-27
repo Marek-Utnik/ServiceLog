@@ -8,9 +8,8 @@ import lombok.*;
 @Setter
 public class AuthorityForm{
 
-	Boolean Serviceman = false;
-	Boolean Companyuser = false;
-	Boolean Admin = false;
-	Long SystemUserId;
-
+	private Boolean Serviceman = false;
+	private Boolean Companyuser = false;
+	private Boolean Admin = false;
+	private Long SystemUserId;
 }

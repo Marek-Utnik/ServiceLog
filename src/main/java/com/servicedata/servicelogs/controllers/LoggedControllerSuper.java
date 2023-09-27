@@ -12,17 +12,13 @@ public class LoggedControllerSuper {
 	
     private final CompanyService companyService;
 
-	
 	public LoggedControllerSuper(
-			CompanyService companyService
-			){
+			CompanyService companyService) {
 		this.companyService = companyService;
 	}
 
-
 	@ModelAttribute(name = "companies")
-	public List <Company> addCompaniesToView(Authentication authentication){
+	public List <Company> addCompaniesToView(Authentication authentication) {
     	return companyService.findCompanyByAuthentication(authentication);
-
 	}
 }

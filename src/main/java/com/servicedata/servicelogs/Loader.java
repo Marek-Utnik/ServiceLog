@@ -20,7 +20,6 @@ public class Loader implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-
         prepareAuthorities();
         systemUserService.prepareAdmin();
     }

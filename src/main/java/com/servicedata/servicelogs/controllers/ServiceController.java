@@ -1,6 +1,6 @@
 package com.servicedata.servicelogs.controllers;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -31,52 +31,46 @@ public class ServiceController extends LoggedControllerSuper{
 			  CompanyService companyService,
 			  SystemUserRepository systemUserRepository,
 		      MachineService machineService,
-		      ConservationLogRepository conservationLogRepository
-			  ) {
+		      ConservationLogRepository conservationLogRepository) {
     	super(companyService);
   		this.systemUserRepository = systemUserRepository;
   		this.machineService = machineService;
   		this.conservationLogRepository = conservationLogRepository;
-  		}
+  	}
     
-      @RequestMapping("/log/add/{machineId}")
-	  public String serviceAddLogForm(Model model,
-            			@PathVariable("machineId") Long machineId,
-            			@ModelAttribute("companies") List<Company> companies,
-            			Authentication authentication) {
-	  		
+    @RequestMapping("/log/add/{machineId}")
+	public String serviceAddLogForm(Model model,
+			@PathVariable("machineId") Long machineId,
+            @ModelAttribute("companies") List<Company> companies,
+            Authentication authentication) {
     	String systemUserName = authentication.getName();
-  		SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);      	Machine machine = machineService.findMachineById(machineId);
+  		SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);      	
+  		Machine machine = machineService.findMachineById(machineId);
       	ConservationLog conservationLog = new ConservationLog();
-      	
-      	if (companies.contains(machine.getCompany()))
-      	{
+      	if (companies.contains(machine.getCompany())) {
       		conservationLog.setSystemUser(systemUser);
       		conservationLog.setMachine(machine);
       		model.addAttribute("conservationLog",conservationLog);
   			return "service/conservation-add";
-
       	}   	
-			return "error";
-	  }
+		return "error";
+	}
       
- 	  @RequestMapping("/log/save")
-	  public String serviceSaveLog(Model model,
-			  		@ModelAttribute ConservationLog conservationLog,
-           		  Authentication authentication) {
-	  		
-	  		String systemUserName = authentication.getName();
-    		SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);
-        	Company company = conservationLog.getMachine().getCompany();
-        	
-			if (systemUser.getCompanies().contains(company))
-        	{
-	      		conservationLog.setPublicationDate(new Date());
-        		conservationLogRepository.save(conservationLog);
-    			return "redirect:/machine/details/"+conservationLog.getMachine().getMachineId();
-        	}
-        	
-			return "index";
-	  }
- }
+ 	@RequestMapping("/log/save")
+	public String serviceSaveLog(Model model,
+			@ModelAttribute ConservationLog conservationLog,
+           	Authentication authentication) {
+	  	String systemUserName = authentication.getName();
+    	SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);
+        Company company = conservationLog.getMachine().getCompany();
+        System.out.println(systemUserName);
+        if (systemUser.getCompanies().contains(company)) {
+	      	conservationLog.setPublicationDate(LocalDate.now());
+        	conservationLogRepository.save(conservationLog);
+    		return "redirect:/machine/details/"+conservationLog.getMachine().getMachineId();
+        }
+        return "index";
+	}
+
+}
     

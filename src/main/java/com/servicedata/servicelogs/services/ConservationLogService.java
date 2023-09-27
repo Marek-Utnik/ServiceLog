@@ -2,8 +2,8 @@
     
 package com.servicedata.servicelogs.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -17,8 +17,6 @@ import com.servicedata.servicelogs.exceptions.SystemUserNotFoundException;
 import com.servicedata.servicelogs.models.ConservationLog;
 import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.models.SystemUser;
-import com.servicedata.servicelogs.repositories.ConservationLogRepository;
-import com.servicedata.servicelogs.repositories.SystemUserRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -29,20 +27,15 @@ import jakarta.persistence.criteria.Root;
 @Service
 @Transactional
 public class ConservationLogService {
-    private final ConservationLogRepository conservationLogRepository;
-    private final SystemUserRepository systemUserRepository;
+	
     private final SystemUserService systemUserService;
 
     //Obiekt zarządzający Enitities
     private final EntityManager entityManager;
     
     public ConservationLogService(EntityManager entityManager, 
-    		ConservationLogRepository conservationLogRepository, 
-    		SystemUserRepository systemUserRepository,
     		SystemUserService systemUserService) {
     	this.entityManager = entityManager;
-    	this.conservationLogRepository = conservationLogRepository;
-        this.systemUserRepository = systemUserRepository;
         this.systemUserService = systemUserService;
 
     }    
@@ -50,8 +43,8 @@ public class ConservationLogService {
     public Page<ConservationLog> filteredConservationLog(Pageable pageable, 
     		Machine machine, 
     		String conservationDescription, 
-    		Date publicationDateStart, 
-    		Date publicationDateEnd, 
+    		LocalDate publicationDateStart, 
+    		LocalDate publicationDateEnd, 
     		Long systemUserId ){
         boolean conservationDecriptionCheck = conservationDescription != null && !conservationDescription.isBlank();
         boolean publicationDateStartCheck = publicationDateStart != null;
@@ -93,14 +86,14 @@ public class ConservationLogService {
         	}
         	
         }
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), conservationLogRoot, criteriaBuilder));
+        select.where(predicates.toArray(Predicate[]::new));
+        select.orderBy(QueryUtils.toOrders(pageable.getSort(), conservationLogRoot, criteriaBuilder));
 
-        List <ConservationLog> filteredConservationLogs = entityManager.createQuery(criteriaQuery).getResultList();
+        List <ConservationLog> filteredConservationLogs = entityManager.createQuery(select).getResultList();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredConservationLogs.size());
         List<ConservationLog> pageContent = filteredConservationLogs.subList(start, end);        
-        Page <ConservationLog> page = new PageImpl(pageContent, pageable, filteredConservationLogs.size());
+        Page <ConservationLog> page = new PageImpl<ConservationLog>(pageContent, pageable, filteredConservationLogs.size());
         return page;
     }
 

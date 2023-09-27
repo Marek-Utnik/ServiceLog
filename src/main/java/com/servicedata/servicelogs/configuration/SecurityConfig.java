@@ -24,19 +24,17 @@ public class SecurityConfig {
     public SecurityConfig(SystemUserDetailsService systemUserDetailsService) {
         this.systemUserDetailsService = systemUserDetailsService;
     }
-    
-    
+        
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){ 
+    public DaoAuthenticationProvider authenticationProvider() { 
     	DaoAuthenticationProvider provider = new DaoAuthenticationProvider(); 
     	provider.setPasswordEncoder(bCryptPasswordEncoder()); 
     	provider.setUserDetailsService(systemUserDetailsService);
-    return provider; }
-	
-	
+    	return provider; 
+    }
+
 	@Bean
 	public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
-
 		httpSecurity.authorizeHttpRequests(
 	            		auth -> auth.requestMatchers("/error","/contact","/css/**", "/fragments/**").permitAll()
 	            		.requestMatchers("/register","/new-user").anonymous()
@@ -50,8 +48,6 @@ public class SecurityConfig {
 						.defaultSuccessUrl("/", true)
 						.permitAll()
 					);
-
-
 		return	httpSecurity.build();
 	}
 }

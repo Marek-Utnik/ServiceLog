@@ -96,14 +96,14 @@ public class MachineService {
         if (machineTypeCheck) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.upper(machineRoot.get("machineType")), "%" + machineType.toUpperCase() + "%"));
         }
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), machineRoot, criteriaBuilder));
+        select.where(predicates.toArray(Predicate[]::new));
+        select.orderBy(QueryUtils.toOrders(pageable.getSort(), machineRoot, criteriaBuilder));
 
-        List <Machine> filteredMachines = entityManager.createQuery(criteriaQuery).getResultList();
+        List <Machine> filteredMachines = entityManager.createQuery(select).getResultList();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredMachines.size());
         List<Machine> pageContent = filteredMachines.subList(start, end);        
-        Page <Machine> page = new PageImpl(pageContent, pageable, filteredMachines.size());
+        Page <Machine> page = new PageImpl<Machine>(pageContent, pageable, filteredMachines.size());
         return page;
     }
     

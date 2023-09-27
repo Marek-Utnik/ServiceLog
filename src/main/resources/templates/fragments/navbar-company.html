@@ -1,57 +1,98 @@
-<nav th:fragment="navbar-company" class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">Zeszyt konserwacji</a> <!-- homepage to insert -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+<nav 
+	th:fragment="navbar-company" 
+	class="navbar navbar-expand-lg navbar-light bg-light">
+    <a 
+    	class="navbar-brand" 
+    	href="/">
+    	Service Log
+    </a>
+    <button 
+    		class="navbar-toggler" 
+    		type="button" 
+    		data-toggle="collapse" 
+    		data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+    	<span class="navbar-toggler-icon"></span>
     </button>
 	<div class="collapse navbar-collapse" id="navbarNav">
     	<ul class="navbar-nav">
-      	<li class="nav-item">
-       		<a class="nav-link" href="/contact">Kontakt</a>
-      	</li>
-      	<div sec:authorize="isAuthenticated()">
-      	<li class="nav-item">
-       		<a class="nav-link" href="/machine/list">Baza konserwacji</a>
-      	</li>
-    	</ul>
-    	</div>
-    	</ul>
+      		<li class="nav-item">
+       			<a class="nav-link" href="/contact">Contact</a>
+      		</li>
+      		<div sec:authorize="isAuthenticated()">
+      			<li class="nav-item">
+       				<a class="nav-link" href="/machine/list">Service Database</a>
+      			</li>
+   			 </div>
+   		</ul>
   	</div>
 
-    <nav class="collapse navbar-collapse" id="navbarSupportedContent">
+    <nav 
+    		class="collapse navbar-collapse" 
+    		id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
+                <a 
+                	class="nav-link dropdown-toggle" 
+                	href="#" id="navbarDropdown" 
+                	role="button" 
+                	data-toggle="dropdown"
+                   	aria-haspopup="true" 
+                   	aria-expanded="false">
                     Companies
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            		<a th:each="company: ${companies}" class="dropdown-item" th:href="@{|/machine/list/${company.companyId}|}" th:text="${company.companyName}">Company Name</a>
+                <div 
+                	class="dropdown-menu" 
+                	aria-labelledby="navbarDropdown">
+            		<a 
+            			th:each="company: ${companies}" 
+            			class="dropdown-item" 
+            			th:href="@{|/machine/list/${company.companyId}|}" 
+            			th:text="${company.companyName}">
+            			Company Name
+            		</a>
                 </div>
             </li>
         </ul>
     </nav>
     
-    
     <div sec:authorize="isAuthenticated()">
         <ul class="navbar-nav">
-        
-      	<li class="nav-item">
-      	<a class="nav-link disabled" href="#">
-    	<div sec:authentication="name"></div>
-    	</a>
-        </li>
-    	<li> <li/>
-        <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="nav-item">
-		<form th:action="@{/admin/admin-menu}" method="post" class="form-inline">
-        	<input type="submit" value="Admin panel" class="btn btn-secondary">
-    	</form>
-    	 </li>  
-    	<li class="nav-item">&nbsp;<li/>
-      	<li class="nav-item">
-		<form th:action="@{/logout}" method="post" class="form-inline">
-        	<input type="submit" th:value="#{logout.label}" class="btn btn-secondary">
-    	</form>
-    	 </li>
+           	<li class="nav-item">
+      			<a 
+      				class="nav-link disabled" 
+      				href="#">
+    				<div sec:authentication="name"></div>
+    			</a>
+        	</li>
+    		<li> 
+			</li>
+        	<li 
+        		sec:authorize="hasAuthority('ROLE_ADMIN')" 
+        		class="nav-item">
+				<form 
+					th:action="@{/admin/admin-menu}" 
+					method="post" 
+					class="form-inline">
+        			<input 
+        				type="submit" 
+        				value="Admin panel" 
+        				class="btn btn-secondary">
+    			</form>
+    	 	</li>  
+    		<li class="nav-item">&nbsp;<li/>
+      		<li class="nav-item">
+				<form 
+					th:action="@{/logout}" 
+					method="post" 
+					class="form-inline">
+        			<input 
+        				type="submit" 
+        				th:value="#{logout.label}" 
+        				class="btn btn-secondary">
+    			</form>
+    	 	</li>
         </ul>
     </div>
