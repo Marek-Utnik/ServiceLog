@@ -15,18 +15,21 @@
             <label for="registrationNumber">Registraition number: </label>
             <input type="number" class="form-control" id="registrationNumber" th:field="*{registrationNumber}"/>
         </div>
-                <div class="mb-3">
+        <div class="mb-3">
             <label for="serialNumber">Serial number: </label>
             <input type="number" class="form-control" id="serialNumber" th:field="*{serialNumber}"/>
         </div>
         <div class="mb-3">
             <label for="producerName">Producer name: </label>
-            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('producerName') ? 'is-invalid' : ''}" id="producerName" th:field="*{producerName}"/>
-        	<small th:if="${#fields.hasErrors('producerName')}" th:errors="*{producerName}" class="text-danger"></small>        </div>
+            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('producerName') ? 'is-invalid' : ''}"
+                   id="producerName" th:field="*{producerName}"/>
+            <small th:if="${#fields.hasErrors('producerName')}" th:errors="*{producerName}" class="text-danger"></small>
+        </div>
         <div class="mb-3">
             <label for="machineType">Machine type: </label>
-            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('machineType') ? 'is-invalid' : ''}" id="machineType" th:field="*{machineType}"/>
-        	<small th:if="${#fields.hasErrors('machineType')}" th:errors="*{machineType}" class="text-danger"></small>
+            <input type="text" th:class="'form-control ' + ${#fields.hasErrors('machineType') ? 'is-invalid' : ''}"
+                   id="machineType" th:field="*{machineType}"/>
+            <small th:if="${#fields.hasErrors('machineType')}" th:errors="*{machineType}" class="text-danger"></small>
         </div>
         <input type="hidden" th:field="*{company}">
         <input type="hidden" th:field="*{machineId}">

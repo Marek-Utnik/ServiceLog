@@ -1,7 +1,7 @@
 package com.servicedata.servicelogs;
 
-import com.servicedata.servicelogs.models.Authority;
 import com.servicedata.servicelogs.enums.AuthorityName;
+import com.servicedata.servicelogs.models.Authority;
 import com.servicedata.servicelogs.repositories.AuthorityRepository;
 import com.servicedata.servicelogs.services.SystemUserService;
 import org.springframework.beans.factory.InitializingBean;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Loader implements InitializingBean {
+
 
     private final AuthorityRepository authorityRepository;
     private final SystemUserService systemUserService;
@@ -24,7 +25,7 @@ public class Loader implements InitializingBean {
         systemUserService.prepareAdmin();
     }
 
-    private void prepareAuthorities()  {
+    private void prepareAuthorities() {
         for (AuthorityName name : AuthorityName.values()) {
             Authority existingAuthority = authorityRepository.findByName(name);
             if (existingAuthority == null) {
@@ -33,5 +34,5 @@ public class Loader implements InitializingBean {
             }
         }
     }
-    
+
 }

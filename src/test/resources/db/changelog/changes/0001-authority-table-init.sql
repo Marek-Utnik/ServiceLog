@@ -1,0 +1,7 @@
+CREATE TABLE authority (
+	authority_id BIGINT NOT NULL,
+	name VARCHAR(255) NOT NULL,
+	CONSTRAINT authority_pkey PRIMARY KEY (authority_id)
+	);
+ALTER TABLE authority ADD CONSTRAINT uk_jdeu5vgpb8k5ptsqhrvamuad2 UNIQUE (name);
+CREATE SEQUENCE  IF NOT EXISTS authority_seq AS bigint START WITH 1 INCREMENT BY 50 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;

@@ -1,0 +1,2 @@
+INSERT INTO machine(machine_id, registration_number, serial_number, machine_type, producer_name, company_id) VALUES (1,45,67,'suwnica', 'FUD',1);
+INSERT INTO machine(machine_id, registration_number, serial_number, machine_type, producer_name, company_id) VALUES (402,85,167,'suwnica', 'FUD',1);

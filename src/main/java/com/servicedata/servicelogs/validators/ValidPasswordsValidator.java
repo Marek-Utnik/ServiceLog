@@ -1,7 +1,6 @@
 package com.servicedata.servicelogs.validators;
 
 import com.servicedata.servicelogs.models.SystemUser;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

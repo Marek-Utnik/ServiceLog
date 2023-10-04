@@ -1,24 +1,24 @@
 package com.servicedata.servicelogs.services;
 
 
+import com.servicedata.servicelogs.exceptions.CompanyNotFoundException;
+import com.servicedata.servicelogs.models.Company;
+import com.servicedata.servicelogs.repositories.CompanyRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.servicedata.servicelogs.exceptions.CompanyNotFoundException;
-import com.servicedata.servicelogs.models.Company;
-import com.servicedata.servicelogs.repositories.CompanyRepository;
-
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class BookServiceTest {
+class CompanyServiceTest {
     @Mock
     private CompanyRepository companyRepository;
     @InjectMocks
@@ -40,7 +40,7 @@ class BookServiceTest {
                 () -> assertEquals(companyFromDatabase.getCompanyAddress(), company.getCompanyAddress())
         );
     }
-    
+
     @Test
     void findCompanyByIdThrowsProperExceptionWhenIdIsIncorrect() {
         // given
@@ -54,8 +54,4 @@ class BookServiceTest {
     }
 
 
-    
-    
-    
-    
 }

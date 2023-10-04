@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: authority-table-init
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0001-authority-table-init.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: authority-table-data
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0002-authority-table-data.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: system-user-table-init
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0003-system-user-table-init.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: system-user-table-data
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0004-system-user-table-data.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: company-table-init
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0005-company-table-init.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: company-table-data
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0006-company-table-data.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: machine-table-init
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0007-machine-table-init.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: machine-table-data
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0008-machine-table-data.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: conservation-log-table-init
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0009-conservation-log-table-init.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: conservation-log-table-data
+      author: Marek Utnik
+      changes:
+        - sqlFile:
+            path: /changes/0010-conservation-log-table-data.sql
+            relativeToChangelogFile: true

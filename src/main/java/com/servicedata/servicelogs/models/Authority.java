@@ -1,24 +1,19 @@
 package com.servicedata.servicelogs.models;
 
 import com.servicedata.servicelogs.enums.AuthorityName;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
 @Entity
-public class Authority{
+public class Authority {
 
-	@Id
-	@GeneratedValue
-	private Long authorityId;
-	
+    @Id
+    @GeneratedValue
+    private Long authorityId;
+
     @Column(nullable = false, unique = true)
     @Enumerated(EnumType.STRING)
     AuthorityName name;

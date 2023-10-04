@@ -1,38 +1,23 @@
 package com.servicedata.servicelogs.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.servicedata.servicelogs.exceptions.MachineNotFoundException;
 import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.repositories.MachineRepository;
+import lombok.RequiredArgsConstructor;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
+
 public class MachineService {
     private final MachineRepository machineRepository;
-
-    //Obiekt zarządzający Enitities
-    private final EntityManager entityManager;
-
-    public MachineService(MachineRepository machineRepository, EntityManager entityManager) {
-        this.machineRepository = machineRepository;
-        this.entityManager = entityManager;
-    }
 
     public void addNewMachine(Machine machine) {
         machineRepository.save(machine);
@@ -54,57 +39,41 @@ public class MachineService {
     public Page<Machine> listMachines(Pageable pageable) {
         return machineRepository.findAll(pageable);
     }
-    public Page<Machine> filteredMachine(Pageable pageable, 
-    		Company company, 
-    		Long machineId, 
-    		Integer registrationNumber, 
-    		Integer serialNumber, 
-    		String producerName,
-    		String machineType
-    		){
+
+    public Page<Machine> filteredMachine(Pageable pageable,
+                                         Company company,
+                                         Long machineId,
+                                         Integer registrationNumber,
+                                         Integer serialNumber,
+                                         String producerName,
+                                         String machineType
+    ) {
         boolean machineIdCheck = machineId != null;
         boolean registrationNumberCheck = registrationNumber != null;
         boolean serialNumberCheck = serialNumber != null;
         boolean producerNameCheck = producerName != null && !producerName.isBlank();
         boolean machineTypeCheck = machineType != null && !machineType.isBlank();
 
-        //Obiekt budujący zapytanie do bazy
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        //Obiekt zapytania do bazy - jakie będą zwracane obiekty
-        CriteriaQuery<Machine> criteriaQuery = criteriaBuilder.createQuery(Machine.class);
-        //Gdzie będziemy szukać
-        Root<Machine> machineRoot = criteriaQuery.from(Machine.class);
-        //Określamy że to będzie select
-        CriteriaQuery<Machine> select = criteriaQuery.select(machineRoot);
-        //Pusta lista warunków
-        List<Predicate> predicates = new ArrayList<>();
-        
-        
-        predicates.add(criteriaBuilder.equal(machineRoot.get("company"), company));
+        Specification<Machine> specification = Specification.where(null);
+
         if (machineIdCheck) {
-            predicates.add(criteriaBuilder.equal(machineRoot.get("machineId"), machineId));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("machineId"), machineId));
         }
         if (registrationNumberCheck) {
-            predicates.add(criteriaBuilder.equal(machineRoot.get("registrationNumber"), registrationNumber));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("registrationNumber"), registrationNumber));
         }
         if (serialNumberCheck) {
-            predicates.add(criteriaBuilder.equal(machineRoot.get("serialNumber"), serialNumber));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("serialNumber"), serialNumber));
         }
         if (producerNameCheck) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(machineRoot.get("producerName")), "%" + producerName.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("producerName")), "%" + producerName.toUpperCase() + "%"));
         }
         if (machineTypeCheck) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(machineRoot.get("machineType")), "%" + machineType.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("machineType")), "%" + machineType.toUpperCase() + "%"));
         }
-        select.where(predicates.toArray(Predicate[]::new));
-        select.orderBy(QueryUtils.toOrders(pageable.getSort(), machineRoot, criteriaBuilder));
-
-        List <Machine> filteredMachines = entityManager.createQuery(select).getResultList();
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), filteredMachines.size());
-        List<Machine> pageContent = filteredMachines.subList(start, end);        
-        Page <Machine> page = new PageImpl<Machine>(pageContent, pageable, filteredMachines.size());
+        
+        Page<Machine> page = machineRepository.findAll(specification, pageable);    
         return page;
     }
-    
+
 }

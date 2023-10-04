@@ -1,37 +1,42 @@
 package com.servicedata.servicelogs.models;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.Set;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Company{
-	
-	@Id
-	@GeneratedValue
-	private Long companyId;
-	
-	private String companyName;
-	
-	private String companyAddress;
-	
-	@OneToMany(mappedBy = "company")
-	@JsonIgnoreProperties("company")
-	private Set<Machine> machines;
-	
+public class Company {
+
+    @Id
+    @GeneratedValue
+    private Long companyId;
+
+    private String companyName;
+
+    private String companyAddress;
+
+    @OneToMany(mappedBy = "company")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnoreProperties("company")
+    private Set<Machine> machines;
+
     @ManyToMany(mappedBy = "companies")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SystemUser> systemUsers;
-	
-	public Company(String companyName, 
-			String companyAddress) {
-		this.companyName = companyName;
-		this.companyAddress = companyAddress;
-	}
-		
+
+    public Company(String companyName,
+                   String companyAddress) {
+        this.companyName = companyName;
+        this.companyAddress = companyAddress;
+    }
+
 }
