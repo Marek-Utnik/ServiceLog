@@ -1,0 +1,34 @@
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+spring:
+  datasource:
+    password: password
+    url: jdbc:postgresql://localhost:5432/servicelog
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+      jakarta:
+        persistence:
+          validation:
+            mode: none
+  liquibase:
+    changeLog: classpath:/db/changelog/liquibase-changelog-master.xml
+    enabled: true
+    password: password
+    url: jdbc:postgresql://localhost:5432/servicelog
+    user: postgres
+  messages:
+    basename: languages/messages
+    encoding: UTF-8
+    fallback-to-system-locale: true

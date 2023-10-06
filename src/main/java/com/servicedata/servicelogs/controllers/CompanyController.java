@@ -8,6 +8,8 @@ import com.servicedata.servicelogs.repositories.SystemUserRepository;
 import com.servicedata.servicelogs.services.CompanyService;
 import com.servicedata.servicelogs.services.MachineService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
+@Slf4j
 @RequestMapping("/company")
 public class CompanyController extends LoggedControllerSuper {
 
@@ -59,7 +62,7 @@ public class CompanyController extends LoggedControllerSuper {
                                     @Valid Machine machine,
                                     Errors errors,
                                     Authentication authentication) {
-        System.out.println(errors);
+        log.info(errors.toString());
         if (errors.hasErrors()) {
             model.addAttribute("machine", machine);
             return "company/machine-add";
@@ -106,14 +109,12 @@ public class CompanyController extends LoggedControllerSuper {
     }
 
     @RequestMapping("/machine/delete/{machineId}")
-    public String companyDeleteMachine(Model model,
-                                       @PathVariable("machineId") Long machineId,
+    public String companyDeleteMachine(@PathVariable("machineId") Long machineId,
                                        @ModelAttribute("companies") List<Company> companies,
                                        Authentication authentication) {
         Machine machine = machineService.findMachineById(machineId);
         Company company = machine.getCompany();
         if (companies.contains(company)) {
-            machine.getConservationLogs(); //WTF
             machineRepository.delete(machine);
             return "redirect:/machine/list/" + company.getCompanyId();
         }

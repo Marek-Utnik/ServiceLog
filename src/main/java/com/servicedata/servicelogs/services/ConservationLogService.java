@@ -1,12 +1,14 @@
 package com.servicedata.servicelogs.services;
 
-import com.servicedata.servicelogs.exceptions.SystemUserNotFoundException;
+import com.servicedata.servicelogs.forms.ConservationLogFilterData;
 import com.servicedata.servicelogs.models.ConservationLog;
 import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.models.SystemUser;
 import com.servicedata.servicelogs.repositories.ConservationLogRepository;
 
+import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,48 +16,38 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class ConservationLogService {
 
-    private final SystemUserService systemUserService;
     private final ConservationLogRepository conservationLogRepository;
     
     public Page<ConservationLog> filteredConservationLog(Pageable pageable,
             												Machine machine,
-            												String conservationDescription,
-            												LocalDate publicationDateStart,
-            												LocalDate publicationDateEnd,
-            												Long systemUserId) {
-        boolean conservationDecriptionCheck = conservationDescription != null && !conservationDescription.isBlank();
-        boolean publicationDateStartCheck = publicationDateStart != null;
-        boolean publicationDateEndCheck = publicationDateEnd != null;
-        boolean systemUserIdCheck = systemUserId != null;
-
-        Specification<ConservationLog> specification = Specification.where(null);
-
+            												ConservationLogFilterData filterData) {
+        boolean conservationDecriptionCheck = filterData.getConservationDescription() != null && !filterData.getConservationDescription().isBlank();
+        boolean publicationDateStartCheck = filterData.getPublicationDateStart() != null;
+        boolean publicationDateEndCheck = filterData.getPublicationDateEnd() != null;
+        boolean systemUserIdCheck = filterData.getSystemUserId() != null;
+        Specification<ConservationLog> specification = Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("machine"), machine));
+        log.info("System User Id: {}", filterData.getSystemUserId());
         if (conservationDecriptionCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("conservationDescription")), "%" + conservationDescription.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("conservationDescription")), "%" + filterData.getConservationDescription().toUpperCase() + "%"));
         }
         if (publicationDateStartCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("publicationDate"), publicationDateStart));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("publicationDate"), filterData.getPublicationDateStart()));
         }
         if (publicationDateEndCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), publicationDateEnd));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), filterData.getPublicationDateEnd()));
         }
         if (systemUserIdCheck) {
-            try {
-                SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
-            	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("systemUser"), systemUser));
-
-            } catch (SystemUserNotFoundException e) {
-                e.printStackTrace();
-            	SystemUser systemUser = null;
-            	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("systemUser"), systemUser));
-            }
+        	specification = specification.and((root, query, criteriaBuilder) -> {
+        		Join<SystemUser, ConservationLog> conservationLogSystemUser = root.join("systemUser");
+        		return criteriaBuilder.equal(conservationLogSystemUser.get("systemUserId"), filterData.getSystemUserId());
+        	});
         }
         
         Page<ConservationLog> page = conservationLogRepository.findAll(specification, pageable);    

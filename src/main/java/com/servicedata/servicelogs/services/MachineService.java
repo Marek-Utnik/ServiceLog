@@ -1,6 +1,7 @@
 package com.servicedata.servicelogs.services;
 
 import com.servicedata.servicelogs.exceptions.MachineNotFoundException;
+import com.servicedata.servicelogs.forms.MachineFilterData;
 import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.repositories.MachineRepository;
@@ -19,57 +20,37 @@ import org.springframework.transaction.annotation.Transactional;
 public class MachineService {
     private final MachineRepository machineRepository;
 
-    public void addNewMachine(Machine machine) {
-        machineRepository.save(machine);
-    }
-
-    public void deleteMachineById(long machineId) {
-        machineRepository.deleteById(machineId);
-    }
-
-    public void updateMachine(Machine machine) {
-        machineRepository.save(machine);
-    }
-
     public Machine findMachineById(long machineId) {
         return machineRepository.findById(machineId)
                 .orElseThrow(() -> new MachineNotFoundException("No machine found with the following ID: %d".formatted(machineId)));
     }
 
-    public Page<Machine> listMachines(Pageable pageable) {
-        return machineRepository.findAll(pageable);
-    }
-
     public Page<Machine> filteredMachine(Pageable pageable,
                                          Company company,
-                                         Long machineId,
-                                         Integer registrationNumber,
-                                         Integer serialNumber,
-                                         String producerName,
-                                         String machineType
+                                         MachineFilterData filterData
     ) {
-        boolean machineIdCheck = machineId != null;
-        boolean registrationNumberCheck = registrationNumber != null;
-        boolean serialNumberCheck = serialNumber != null;
-        boolean producerNameCheck = producerName != null && !producerName.isBlank();
-        boolean machineTypeCheck = machineType != null && !machineType.isBlank();
+        boolean machineIdCheck = filterData.getMachineId() != null;
+        boolean registrationNumberCheck = filterData.getRegistrationNumber() != null;
+        boolean serialNumberCheck = filterData.getSerialNumber() != null;
+        boolean producerNameCheck = filterData.getProducerName() != null && !filterData.getProducerName().isBlank();
+        boolean machineTypeCheck = filterData.getMachineType() != null && !filterData.getMachineType().isBlank();
 
-        Specification<Machine> specification = Specification.where(null);
+        Specification<Machine> specification = Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("company"), company));
 
         if (machineIdCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("machineId"), machineId));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("machineId"), filterData.getMachineId()));
         }
         if (registrationNumberCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("registrationNumber"), registrationNumber));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("registrationNumber"), filterData.getRegistrationNumber()));
         }
         if (serialNumberCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("serialNumber"), serialNumber));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("serialNumber"), filterData.getSerialNumber()));
         }
         if (producerNameCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("producerName")), "%" + producerName.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("producerName")), "%" + filterData.getProducerName().toUpperCase() + "%"));
         }
         if (machineTypeCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("machineType")), "%" + machineType.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("machineType")), "%" + filterData.getMachineType().toUpperCase() + "%"));
         }
         
         Page<Machine> page = machineRepository.findAll(specification, pageable);    

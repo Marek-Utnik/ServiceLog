@@ -34,7 +34,7 @@ public class SystemUser {
     private String password;
 
     @Transient
-    String repeatedPassword;
+    private String repeatedPassword;
 
     @Column(nullable = false)
     private String name;

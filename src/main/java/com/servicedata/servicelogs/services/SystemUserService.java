@@ -1,6 +1,7 @@
 package com.servicedata.servicelogs.services;
 
 import com.servicedata.servicelogs.exceptions.SystemUserNotFoundException;
+import com.servicedata.servicelogs.forms.SystemUserFilterData;
 import com.servicedata.servicelogs.models.Authority;
 import com.servicedata.servicelogs.models.SystemUser;
 import com.servicedata.servicelogs.repositories.AuthorityRepository;
@@ -58,29 +59,26 @@ public class SystemUserService {
     }
 
     public Page<SystemUser> filteredSystemUser(Pageable pageable,
-                                               Long systemUserId,
-                                               String username,
-                                               String name,
-                                               String surname
+                                               SystemUserFilterData filterData
     ) {
-        boolean systemUserIdCheck = systemUserId != null;
-        boolean usernameCheck = username != null && !username.isBlank();
-        boolean nameCheck = name != null && !name.isBlank();
-        boolean surnameCheck = surname != null && !surname.isBlank();
+        boolean systemUserIdCheck = filterData.getSystemUserId() != null;
+        boolean usernameCheck = filterData.getUsername() != null && !filterData.getUsername().isBlank();
+        boolean nameCheck = filterData.getName() != null && !filterData.getName().isBlank();
+        boolean surnameCheck = filterData.getSurname() != null && !filterData.getSurname().isBlank();
 
         Specification<SystemUser> specification = Specification.where(null);
 
         if (systemUserIdCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("systemUserId"), systemUserId));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("systemUserId"), filterData.getSystemUserId()));
         }
         if (usernameCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("username")), "%" + username.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("username")), "%" + filterData.getUsername().toUpperCase() + "%"));
         }
         if (nameCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%" + name.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%" + filterData.getName().toUpperCase() + "%"));
         }
         if (surnameCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("surname")), "%" + surname.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("surname")), "%" + filterData.getSurname().toUpperCase() + "%"));
         }
         
         Page<SystemUser> page = systemUserRepository.findAll(specification, pageable);    

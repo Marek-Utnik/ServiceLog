@@ -1,6 +1,7 @@
 package com.servicedata.servicelogs.services;
 
 import com.servicedata.servicelogs.exceptions.CompanyNotFoundException;
+import com.servicedata.servicelogs.forms.CompanyFilterData;
 import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.SystemUser;
 import com.servicedata.servicelogs.repositories.CompanyRepository;
@@ -38,24 +39,22 @@ public class CompanyService {
     }
     
     public Page<Company> filteredCompany(Pageable pageable,
-                                            Long companyId,
-                                            String companyName,
-                                            String companyAddress
+    									 CompanyFilterData filterData
     ) {
-        boolean companyIdCheck = companyId != null;
-        boolean companyNameCheck = companyName != null && !companyName.isBlank();
-        boolean companyAddressCheck = companyAddress != null && !companyAddress.isBlank();
+        boolean companyIdCheck = filterData.getCompanyId() != null;
+        boolean companyNameCheck = filterData.getCompanyName() != null && !filterData.getCompanyName().isBlank();
+        boolean companyAddressCheck = filterData.getCompanyAddress() != null && !filterData.getCompanyAddress().isBlank();
 
         Specification<Company> specification = Specification.where(null);
 
         if (companyIdCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("companyId"), companyId));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("companyId"), filterData.getCompanyId()));
         }
         if (companyNameCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("companyName")), "%" + companyName.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("companyName")), "%" + filterData.getCompanyName().toUpperCase() + "%"));
         }
         if (companyAddressCheck) {
-        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("companyAddress")), "%" + companyAddress.toUpperCase() + "%"));
+        	specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("companyAddress")), "%" + filterData.getCompanyAddress().toUpperCase() + "%"));
         }
         
         Page<Company> page = companyRepository.findAll(specification, pageable);

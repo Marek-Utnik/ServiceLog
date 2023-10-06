@@ -8,6 +8,9 @@ import com.servicedata.servicelogs.repositories.ConservationLogRepository;
 import com.servicedata.servicelogs.repositories.SystemUserRepository;
 import com.servicedata.servicelogs.services.CompanyService;
 import com.servicedata.servicelogs.services.MachineService;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
+@Slf4j
 @RequestMapping("/service")
 public class ServiceController extends LoggedControllerSuper {
 
@@ -56,13 +60,12 @@ public class ServiceController extends LoggedControllerSuper {
     }
 
     @RequestMapping("/log/save")
-    public String serviceSaveLog(Model model,
-                                 @ModelAttribute ConservationLog conservationLog,
+    public String serviceSaveLog(@ModelAttribute ConservationLog conservationLog,
                                  Authentication authentication) {
         String systemUserName = authentication.getName();
         SystemUser systemUser = systemUserRepository.findByUsername(systemUserName);
         Company company = conservationLog.getMachine().getCompany();
-        System.out.println(systemUserName);
+        log.info("System user: {}",systemUserName);
         if (systemUser.getCompanies().contains(company)) {
             conservationLog.setPublicationDate(LocalDate.now());
             conservationLogRepository.save(conservationLog);

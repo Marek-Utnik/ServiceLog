@@ -35,6 +35,6 @@ public class ConservationLog {
     private String conservationDescription;
 
     @Temporal(TemporalType.DATE)
-    LocalDate publicationDate;
+    private LocalDate publicationDate;
 
 }

@@ -1,4 +1,4 @@
-package com.servicedata.servicelogs.form;
+package com.servicedata.servicelogs.forms;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

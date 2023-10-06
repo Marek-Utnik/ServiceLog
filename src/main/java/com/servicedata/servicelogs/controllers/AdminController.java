@@ -1,7 +1,9 @@
 package com.servicedata.servicelogs.controllers;
 
 import com.servicedata.servicelogs.enums.AuthorityName;
-import com.servicedata.servicelogs.form.AuthorityForm;
+import com.servicedata.servicelogs.forms.AuthorityForm;
+import com.servicedata.servicelogs.forms.CompanyFilterData;
+import com.servicedata.servicelogs.forms.SystemUserFilterData;
 import com.servicedata.servicelogs.models.Authority;
 import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.SystemUser;
@@ -11,6 +13,8 @@ import com.servicedata.servicelogs.repositories.SystemUserRepository;
 import com.servicedata.servicelogs.services.CompanyService;
 import com.servicedata.servicelogs.services.SystemUserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
+@Slf4j
 @RequestMapping("/admin")
 public class AdminController extends LoggedControllerSuper {
 
@@ -65,12 +70,10 @@ public class AdminController extends LoggedControllerSuper {
     public String getCompanyList(Model model,
                                  @SortDefault("companyId") Pageable pageable,
                                  @RequestParam(value = "page", defaultValue = "1", required = false) int page,
-                                 @RequestParam(value = "companyId", required = false) Long companyId,
-                                 @RequestParam(value = "companyName", required = false) String companyName,
-                                 @RequestParam(value = "companyAddress", required = false) String companyAddress,
+                                 @ModelAttribute("filterData") CompanyFilterData filterData,
                                  Sort sort) {
         pageable = PageRequest.of(page - 1, 4, sort);
-        Page<Company> companiesPaged = companyService.filteredCompany(pageable, companyId, companyName, companyAddress);
+        Page<Company> companiesPaged = companyService.filteredCompany(pageable, filterData);
         int totalPages = companiesPaged.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
@@ -115,13 +118,10 @@ public class AdminController extends LoggedControllerSuper {
     public String getUserList(Model model,
                               @SortDefault("systemUserId") Pageable pageable,
                               @RequestParam(value = "page", defaultValue = "1", required = false) int page,
-                              @RequestParam(value = "systemUserId", required = false) Long systemUserId,
-                              @RequestParam(value = "username", required = false) String username,
-                              @RequestParam(value = "name", required = false) String name,
-                              @RequestParam(value = "surname", required = false) String surname,
+                              @ModelAttribute("filterData") SystemUserFilterData filterData,
                               Sort sort) {
         pageable = PageRequest.of(page - 1, 4, sort);
-        Page<SystemUser> systemUsersPaged = systemUserService.filteredSystemUser(pageable, systemUserId, username, name, surname);
+        Page<SystemUser> systemUsersPaged = systemUserService.filteredSystemUser(pageable, filterData);
         int totalPages = systemUsersPaged.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
@@ -228,23 +228,20 @@ public class AdminController extends LoggedControllerSuper {
                                   @PathVariable("systemUserId") Long systemUserId,
                                   @SortDefault("companyId") Pageable pageable,
                                   @RequestParam(value = "page", defaultValue = "1", required = false) int page,
-                                  @RequestParam(value = "companyId", required = false) Long companyId,
-                                  @RequestParam(value = "companyName", required = false) String companyName,
-                                  @RequestParam(value = "companyAddress", required = false) String companyAddress,
+                                  @ModelAttribute("filterData") CompanyFilterData filterData,
                                   Sort sort) {
         SystemUser systemUser = systemUserService.findSystemUserById(systemUserId);
         model.addAttribute("systemUserId", systemUserId);
         pageable = PageRequest.of(page - 1, 4, sort);
-        Page<Company> companiesPaged = companyService.filteredCompany(pageable, companyId, companyName, companyAddress);
+        Page<Company> companiesPaged = companyService.filteredCompany(pageable, filterData);
         int totalPages = companiesPaged.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
         model.addAttribute("companiesPaged", companiesPaged);
-        System.out.println(systemUser.getCompanies());
         List<Long> userCompaniesList = systemUser.getCompanies().stream().map(c -> c.getCompanyId()).collect(Collectors.toList());
-        System.out.println(userCompaniesList);
+        log.info("User companies: {}", userCompaniesList);
         model.addAttribute("userCompaniesList", userCompaniesList);
         return "admin/user-companies";
     }
