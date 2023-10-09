@@ -135,20 +135,13 @@ public class CompanyController extends LoggedControllerSuper {
                                         HttpServletResponse response) {
         Company company = companyService.findCompanyById(companyActive);
         if (companies.contains(company)) {
-        	if ((filterData.getPublicationDateStart()!=null) && (filterData.getPublicationDateEnd()!=null)) {
-        		String headerKey = "Content-Disposition";
-                String headerValue = "attachment; filename=" + company.getCompanyName() +"_"+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
-                response.setHeader(headerKey, headerValue);
-                companyService.generateExcel(response, filterData.getPublicationDateStart(), filterData.getPublicationDateEnd(),company);
-        	}
-        	else {
-        		return "company/excel-gen";
-        	}
+        	model.addAttribute("companyActive", companyActive);
+        	return "company/excel-gen";
         }
        	return "error";	
         
     }
-    @GetMapping("/{companyActive}/excelexp/")
+    @GetMapping("/{companyActive}/excelgen/")
     public void companyExcelGeneration(Model model,
                                         @PathVariable("companyActive") Long companyActive,
                                         @ModelAttribute("companies") List<Company> companies,

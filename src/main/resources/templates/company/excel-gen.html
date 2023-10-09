@@ -15,7 +15,7 @@
 
 <nav th:insert="fragments/navbar-company.html :: navbar-company"></nav>
 
-<form id="filter-form" method="get" class="text-center"  th:object="${filterData}">
+<form id="filter-form" method="get" class="text-center"  th:object="${filterData}" th:action="@{|/company/${companyActive}/excelgen/|}">
     <table class="table table-dark text-center">
         <tr>
             <td>
