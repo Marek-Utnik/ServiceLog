@@ -8,6 +8,8 @@ import com.servicedata.servicelogs.repositories.MachineRepository;
 import com.servicedata.servicelogs.repositories.SystemUserRepository;
 import com.servicedata.servicelogs.services.CompanyService;
 import com.servicedata.servicelogs.services.MachineService;
+
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -127,9 +129,17 @@ public class CompanyController extends LoggedControllerSuper {
                                         @PathVariable("companyActive") Long companyActive,
                                         @ModelAttribute("companies") List<Company> companies,
                                         @ModelAttribute("filterData") ConservationLogFilterData filterData,
-                                        Authentication authentication) {
+                                        Authentication authentication,
+                                        HttpServletResponse response) {
         Company company = companyService.findCompanyById(companyActive);
         if (companies.contains(company)) {
+        	if ((filterData.getPublicationDateStart()!=null) && (filterData.getPublicationDateEnd()!=null)) {
+        		String headerKey = "Content-Disposition";
+                String headerValue = "attachment; filename=" + company.getCompanyName() +"_"+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
+                response.setHeader(headerKey, headerValue);
+                company.generateExcel(response, filterData.getPublicationDateStart(), filterData.getPublicationDateEnd());
+        	}
+        			
             return "company/excel-gen";
         }
         return "error";
