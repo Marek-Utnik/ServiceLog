@@ -3,6 +3,7 @@ package com.servicedata.servicelogs.excelgenerators;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -22,17 +23,15 @@ public class CompanyExcelGenerator {
 	
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-    private String name;
     private Company company;
-    private SortedMap<Machine, ArrayList<ConservationLog>> logs;
+    private SortedMap<Machine, List<ConservationLog>> logs;
     private int rowCount;
 	
-	public CompanyExcelGenerator(String name, Company company, SortedMap<Machine, ArrayList<ConservationLog>> logs) {
+	public CompanyExcelGenerator(Company company, SortedMap<Machine, List<ConservationLog>> logs) {
 
 		workbook = new XSSFWorkbook();
 		this.company = company;
 		this.logs = logs;
-		this.name = name;
 		this.rowCount = 0;
 	}
 	
