@@ -126,6 +126,8 @@
 <div sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_COMPANYUSER')">
     <div th:if="${companyActive!= null}">
         <a class="link" th:href="@{|/company/${companyActive}/machine/add/|}">Add machine</a><br>
+    	<a class="link" th:href="@{|/company/${companyActive}/excel/|}">Service report generation</a><br>
+    	
     </div>
 </div>
 

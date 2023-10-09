@@ -1,5 +1,6 @@
 package com.servicedata.servicelogs.controllers;
 
+import com.servicedata.servicelogs.forms.ConservationLogFilterData;
 import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.models.SystemUser;
@@ -120,5 +121,19 @@ public class CompanyController extends LoggedControllerSuper {
         }
         return "error";
     }
+    
+    @RequestMapping("/{companyActive}/excel/")
+    public String companyAddMachineForm(Model model,
+                                        @PathVariable("companyActive") Long companyActive,
+                                        @ModelAttribute("companies") List<Company> companies,
+                                        @ModelAttribute("filterData") ConservationLogFilterData filterData,
+                                        Authentication authentication) {
+        Company company = companyService.findCompanyById(companyActive);
+        if (companies.contains(company)) {
+            return "company/excel-gen";
+        }
+        return "error";
+    }
+
 
 }
