@@ -37,35 +37,54 @@ public class CompanyExcelGenerator {
 	}
 	
 	private void fillWorkbook() {
-        sheet = workbook.createSheet("ServiceLogs");
+        sheet = workbook.createSheet("Service Logs");
 		addCompany();
 		for (Machine machine : logs.keySet()) {
 			addMachine(machine);
-			addConservationLogDescription();
+			addConservationLogHeader();
 			for (ConservationLog log : logs.get(machine)) {
-				addConservationLog();
+				addConservationLog(log);
 			}	
 		}
 	}
 	
-	private void addConservationLog() {
-		// TODO Auto-generated method stub
-		
+	private void addConservationLog(ConservationLog log) {
+        Row row = sheet.createRow(rowCount++);
+        createCell(row, 1, log.getConservationLogId());
+        createCell(row, 2, log.getSystemUser().getUsername()+" "+log.getSystemUser().getName()+" "+log.getSystemUser().getSurname());
+        createCell(row, 3, log.getPublicationDate().toString());
+        createCell(row, 4, log.getConservationDescription());
 	}
 
-	private void addConservationLogDescription() {
-		// TODO Auto-generated method stub
-		
+	private void addConservationLogHeader() {
+        Row row = sheet.createRow(rowCount++);
+        createCell(row, 1, "Log ID");
+        createCell(row, 2, "Serviceman");
+        createCell(row, 3, "Date");
+        createCell(row, 4, "Service Description");
 	}
 
 	private void addMachine(Machine machine) {
-		// TODO Auto-generated method stub
-		
+        Row row = sheet.createRow(rowCount++);
+        createCell(row, 0, "Machine ID");
+        createCell(row, 1, machine.getMachineId());
+        row = sheet.createRow(rowCount++);
+        createCell(row, 0, "Registration Number");
+        createCell(row, 1, machine.getRegistrationNumber());
+        row = sheet.createRow(rowCount++);
+        createCell(row, 0, "Serial Number");
+        createCell(row, 1, machine.getSerialNumber());
+        row = sheet.createRow(rowCount++);
+        createCell(row, 0, "Producer Name");
+        createCell(row, 1, machine.getProducerName());
+        row = sheet.createRow(rowCount++);
+        createCell(row, 0, "Machine Type");
+        createCell(row, 1, machine.getMachineType());
 	}
 
 	private void addCompany() {
         Row row = sheet.createRow(rowCount++);
-        createCell(row, 0, "ID");
+        createCell(row, 0, "Company ID");
         createCell(row, 1, company.getCompanyId());
         row = sheet.createRow(rowCount++);
         createCell(row, 0, "Company Name");
@@ -84,8 +103,6 @@ public class CompanyExcelGenerator {
             cell.setCellValue((Long) valueOfCell);
         } else if (valueOfCell instanceof String) {
             cell.setCellValue((String) valueOfCell);
-        } else {
-            cell.setCellValue((Boolean) valueOfCell);
         }
     }
 	
