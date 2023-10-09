@@ -17,8 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -124,8 +126,8 @@ public class CompanyController extends LoggedControllerSuper {
         return "error";
     }
     
-    @RequestMapping("/{companyActive}/excel/")
-    public String companyAddMachineForm(Model model,
+    @GetMapping("/{companyActive}/excel/")
+    public String companyExcelGenerationForm(Model model,
                                         @PathVariable("companyActive") Long companyActive,
                                         @ModelAttribute("companies") List<Company> companies,
                                         @ModelAttribute("filterData") ConservationLogFilterData filterData,
@@ -137,13 +139,32 @@ public class CompanyController extends LoggedControllerSuper {
         		String headerKey = "Content-Disposition";
                 String headerValue = "attachment; filename=" + company.getCompanyName() +"_"+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
                 response.setHeader(headerKey, headerValue);
-                company.generateExcel(response, filterData.getPublicationDateStart(), filterData.getPublicationDateEnd());
+                companyService.generateExcel(response, filterData.getPublicationDateStart(), filterData.getPublicationDateEnd(),company);
         	}
-        			
-            return "company/excel-gen";
+        	else {
+        		return "company/excel-gen";
+        	}
         }
-        return "error";
+       	return "error";	
+        
     }
-
+    @GetMapping("/{companyActive}/excelexp/")
+    public void companyExcelGeneration(Model model,
+                                        @PathVariable("companyActive") Long companyActive,
+                                        @ModelAttribute("companies") List<Company> companies,
+                                        @ModelAttribute("filterData") ConservationLogFilterData filterData,
+                                        Authentication authentication,
+                                        HttpServletResponse response) {
+        Company company = companyService.findCompanyById(companyActive);
+        if (companies.contains(company)) {
+        	if ((filterData.getPublicationDateStart()!=null) && (filterData.getPublicationDateEnd()!=null)) {
+        		String headerKey = "Content-Disposition";
+                String headerValue = "attachment; filename=" + company.getCompanyName() +"_"+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
+                response.setHeader(headerKey, headerValue);
+                companyService.generateExcel(response, filterData.getPublicationDateStart(), filterData.getPublicationDateEnd(),company);
+        	}
+        }
+        
+    }
 
 }

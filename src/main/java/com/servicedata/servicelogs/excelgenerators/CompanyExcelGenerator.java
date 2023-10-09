@@ -38,9 +38,11 @@ public class CompanyExcelGenerator {
 		for (Machine machine : logs.keySet()) {
 			addMachine(machine);
 			addConservationLogHeader();
-			for (ConservationLog log : logs.get(machine)) {
-				addConservationLog(log);
-			}	
+			if (logs.get(machine)!=null) {
+				for (ConservationLog log : logs.get(machine)) {
+					addConservationLog(log);
+				}	
+			}
 		}
 	}
 	
@@ -107,6 +109,7 @@ public class CompanyExcelGenerator {
     	ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
+        outputStream.flush();
         outputStream.close();
     }
 	

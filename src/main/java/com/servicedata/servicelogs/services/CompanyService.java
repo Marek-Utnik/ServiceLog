@@ -1,12 +1,20 @@
 package com.servicedata.servicelogs.services;
 
+import com.servicedata.servicelogs.excelgenerators.CompanyExcelGenerator;
 import com.servicedata.servicelogs.exceptions.CompanyNotFoundException;
 import com.servicedata.servicelogs.forms.CompanyFilterData;
 import com.servicedata.servicelogs.models.Company;
+import com.servicedata.servicelogs.models.ConservationLog;
+import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.models.SystemUser;
 import com.servicedata.servicelogs.repositories.CompanyRepository;
+import com.servicedata.servicelogs.repositories.ConservationLogRepository;
+import com.servicedata.servicelogs.repositories.MachineRepository;
 import com.servicedata.servicelogs.repositories.SystemUserRepository;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,15 +23,25 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository companyRepository;
+    private final MachineRepository machineRepository;
     private final SystemUserRepository systemUserRepository;
+	private final ConservationLogRepository conservationLogRepository;
+    
 
     public Company findCompanyById(long companyId) {
         return companyRepository.findById(companyId)
@@ -60,5 +78,25 @@ public class CompanyService {
         Page<Company> page = companyRepository.findAll(specification, pageable);
         return page;
     }
+    
+    public void generateExcel(HttpServletResponse response,     
+			    LocalDate publicationDateStart,
+			    LocalDate publicationDateEnd,
+			    Company company) {    	
+    	SortedMap<Machine, List<ConservationLog>> logs = new TreeMap<>();
+    	List<Machine> machinesL = machineRepository.findAllByCompany(company);
+    	for (Machine machine : machinesL) {
+    		List <ConservationLog> log = conservationLogRepository.findAllByMachine(machine);
+    		logs.put(machine, log);
+    	}
+    	CompanyExcelGenerator file = new CompanyExcelGenerator(company, logs);
+
+    	try {
+    		file.generateExcelFile(response);
+    	} catch(IOException e){
+    		log.error("Error: ", e);
+    	}
+
+}
 
 }

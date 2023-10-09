@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Machine {
+public class Machine implements Comparable<Machine>  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -44,5 +44,17 @@ public class Machine {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties("machine")
     private Set<ConservationLog> conservationLogs;
-
+    
+    public int compareTo(Machine m) {
+    	if (this.getMachineId()>m.getMachineId()) {
+    		return 1;
+    	}
+    	else if (this.getMachineId()<m.getMachineId()) {
+    		return -1;
+    	}
+    	else {
+    		return 0;
+    	}
+    }
+    
 }

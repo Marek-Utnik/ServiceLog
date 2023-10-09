@@ -17,4 +17,6 @@ public interface ConservationLogRepository extends JpaRepository<ConservationLog
     Page<ConservationLog> findByMachine(Pageable pageable, Machine machine);
     Page<ConservationLog> findAll(Specification<ConservationLog> spec, Pageable pageable);
 
+	List<ConservationLog> findAllByMachine(Machine machine);
+
 }

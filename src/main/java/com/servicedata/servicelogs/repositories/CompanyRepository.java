@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
     Optional<Company> findByCompanyName(String companyName);
     Page<Company> findAll(Specification<Company> spec, Pageable pageable);
-
+    
 
 }

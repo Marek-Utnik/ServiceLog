@@ -1,6 +1,10 @@
 package com.servicedata.servicelogs.repositories;
 
+import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.Machine;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,6 +19,6 @@ public interface MachineRepository extends JpaRepository<Machine, Long>, JpaSpec
     @Query("SELECT m FROM Machine m WHERE LOWER(m.company.companyName) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<Machine> findByCompanyNamePageable(Pageable pageable, @Param("name") String companyName);
     Page<Machine> findAll(Specification<Machine> spec, Pageable pageable);
-
+    List<Machine> findAllByCompany(Company company);
 
 }
