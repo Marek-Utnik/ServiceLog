@@ -1,6 +1,7 @@
 package com.servicedata.servicelogs.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.servicedata.servicelogs.controllers.MachineController;
 import com.servicedata.servicelogs.excelgenerators.CompanyExcelGenerator;
 
 import jakarta.persistence.*;
@@ -8,10 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +25,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Entity
 @Data
 @NoArgsConstructor
@@ -66,6 +70,13 @@ public class Company {
         }
 
     	CompanyExcelGenerator file = new CompanyExcelGenerator(this, logs);
+    	
+    	try {
+    		file.generateExcelFile(response);
+    	}
+    	catch(IOException e){
+            log.error("Error: ", e);
+    	}
     	
     }
 
