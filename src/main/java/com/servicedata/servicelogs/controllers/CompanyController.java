@@ -23,7 +23,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
@@ -137,11 +136,11 @@ public class CompanyController extends LoggedControllerSuper {
     
     @GetMapping("/{companyActive}/excel/")
     public String companyExcelGenerationForm(Model model,
-                                        @PathVariable("companyActive") Long companyActive,
-                                        @ModelAttribute("companies") List<Company> companies,
-                                        @ModelAttribute("filterData") ConservationLogFilterData filterData,
-                                        Authentication authentication,
-                                        HttpServletResponse response) {
+                                        	 @PathVariable("companyActive") Long companyActive,
+                                        	 @ModelAttribute("companies") List<Company> companies,
+                                        	 @ModelAttribute("filterData") ConservationLogFilterData filterData,
+                                        	 Authentication authentication,
+                                        	 HttpServletResponse response) {
         Company company = companyService.findCompanyById(companyActive);
         if (companies.contains(company)) {
         	model.addAttribute("companyActive", companyActive);
@@ -152,11 +151,11 @@ public class CompanyController extends LoggedControllerSuper {
     }
     @GetMapping("/{companyActive}/excelgen/")
     public void companyExcelGeneration(Model model,
-                                        @PathVariable("companyActive") Long companyActive,
-                                        @ModelAttribute("companies") List<Company> companies,
-                                        @ModelAttribute("filterData") ConservationLogFilterData filterData,
-                                        Authentication authentication,
-                                        HttpServletResponse response) {
+                                       @PathVariable("companyActive") Long companyActive,
+                                       @ModelAttribute("companies") List<Company> companies,
+                                       @ModelAttribute("filterData") ConservationLogFilterData filterData,
+                                       Authentication authentication,
+                                       HttpServletResponse response) {
         Company company = companyService.findCompanyById(companyActive);
         if (companies.contains(company)) {
         	if ((filterData.getPublicationDateStart()!=null) && (filterData.getPublicationDateEnd()!=null)) {

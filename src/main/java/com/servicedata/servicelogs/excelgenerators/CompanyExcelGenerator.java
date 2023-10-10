@@ -24,8 +24,9 @@ public class CompanyExcelGenerator {
     private SortedMap<Machine, List<ConservationLog>> logs;
     private int rowCount;
 	
-	public CompanyExcelGenerator(Company company, SortedMap<Machine, List<ConservationLog>> logs) {
-
+	public CompanyExcelGenerator(Company company, 
+								 SortedMap<Machine, 
+								 List<ConservationLog>> logs) {
 		workbook = new XSSFWorkbook();
 		this.company = company;
 		this.logs = logs;
@@ -91,7 +92,9 @@ public class CompanyExcelGenerator {
         createCell(row, 1, company.getCompanyAddress());
 	}
 	
-    private void createCell(Row row, int columnCount, Object valueOfCell) {
+    private void createCell(Row row, 
+    						int columnCount, 
+    						Object valueOfCell) {
         sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
         if (valueOfCell instanceof Integer) {
