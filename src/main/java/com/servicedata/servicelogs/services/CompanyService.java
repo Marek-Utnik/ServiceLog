@@ -9,7 +9,6 @@ import com.servicedata.servicelogs.models.ConservationLog;
 import com.servicedata.servicelogs.models.Machine;
 import com.servicedata.servicelogs.models.SystemUser;
 import com.servicedata.servicelogs.repositories.CompanyRepository;
-import com.servicedata.servicelogs.repositories.ConservationLogRepository;
 import com.servicedata.servicelogs.repositories.MachineRepository;
 import com.servicedata.servicelogs.repositories.SystemUserRepository;
 
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;

@@ -7,11 +7,14 @@ import com.servicedata.servicelogs.models.SystemUser;
 import com.servicedata.servicelogs.repositories.MachineRepository;
 import com.servicedata.servicelogs.repositories.SystemUserRepository;
 import com.servicedata.servicelogs.services.CompanyService;
+import com.servicedata.servicelogs.services.EmailService;
 import com.servicedata.servicelogs.services.MachineService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -22,7 +25,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import java.util.List;
 
 @Controller
@@ -34,17 +36,24 @@ public class CompanyController extends LoggedControllerSuper {
     private final SystemUserRepository systemUserRepository;
     private final MachineRepository machineRepository;
     private final MachineService machineService;
+    private final EmailService emailService;
+    
+	@Value("${emailAddressReceiver}")
+	private String emailAddress;
 
     public CompanyController(
             CompanyService companyService,
             SystemUserRepository systemUserRepository,
             MachineRepository machineRepository,
-            MachineService machineService) {
+            MachineService machineService,
+            EmailService emailService) {
         super(companyService);
         this.companyService = companyService;
         this.systemUserRepository = systemUserRepository;
         this.machineRepository = machineRepository;
         this.machineService = machineService;
+        this.emailService = emailService;
+
     }
 
     @RequestMapping("/{companyActive}/machine/add/")
@@ -153,6 +162,10 @@ public class CompanyController extends LoggedControllerSuper {
         	if ((filterData.getPublicationDateStart()!=null) && (filterData.getPublicationDateEnd()!=null)) {
         		String headerKey = "Content-Disposition";
                 String headerValue = "attachment; filename=" + company.getCompanyName() +"_"+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
+            	String mailString = "Username: "+authentication.getName()+" generated file: "+company.getCompanyName() +"_"
+            						+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
+            	
+            	emailService.sendSimpleMessage(emailAddress, "File generated", mailString);
                 response.setHeader(headerKey, headerValue);
                 companyService.generateExcel(response, filterData, company);
         	}
