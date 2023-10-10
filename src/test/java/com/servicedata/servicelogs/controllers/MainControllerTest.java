@@ -1,11 +1,14 @@
 package com.servicedata.servicelogs.controllers;
 
 import com.servicedata.servicelogs.Loader;
+import com.servicedata.servicelogs.services.EmailService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
@@ -21,6 +24,12 @@ public class MainControllerTest {
 
     @MockBean
     Loader loader;
+    
+    @MockBean
+    EmailService emailService;
+    
+    @MockBean
+    CompanyController companyController;
 
     @Test
     public void testContactPage() throws Exception {
