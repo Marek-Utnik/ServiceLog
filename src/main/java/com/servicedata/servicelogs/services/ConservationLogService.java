@@ -10,6 +10,8 @@ import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,6 +54,23 @@ public class ConservationLogService {
         
         Page<ConservationLog> page = conservationLogRepository.findAll(specification, pageable);    
         return page;
+    }
+    
+    public List<ConservationLog> filteredConservationLogExcel(Machine machine,
+															  ConservationLogFilterData filterData) {
+    	boolean publicationDateStartCheck = filterData.getPublicationDateStart() != null;
+    	boolean publicationDateEndCheck = filterData.getPublicationDateEnd() != null;
+    	Specification<ConservationLog> specification = Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("machine"), machine));
+
+    	if (publicationDateStartCheck) {
+    		specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("publicationDate"), filterData.getPublicationDateStart()));
+    	}
+    	if (publicationDateEndCheck) {
+    		specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), filterData.getPublicationDateEnd()));
+    	}
+
+    	List<ConservationLog> conservationLogList = conservationLogRepository.findAll(specification);    
+    	return conservationLogList;
     }
 
 }

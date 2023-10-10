@@ -38,11 +38,10 @@ public class CompanyExcelGenerator {
 		for (Machine machine : logs.keySet()) {
 			addMachine(machine);
 			addConservationLogHeader();
-			if (logs.get(machine)!=null) {
-				for (ConservationLog log : logs.get(machine)) {
-					addConservationLog(log);
-				}	
-			}
+			for (ConservationLog log : logs.get(machine)) {
+				addConservationLog(log);
+			}	
+			
 		}
 	}
 	

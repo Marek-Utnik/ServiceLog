@@ -154,7 +154,7 @@ public class CompanyController extends LoggedControllerSuper {
         		String headerKey = "Content-Disposition";
                 String headerValue = "attachment; filename=" + company.getCompanyName() +"_"+ filterData.getPublicationDateStart() +"_"+ filterData.getPublicationDateEnd()+".xlsx";
                 response.setHeader(headerKey, headerValue);
-                companyService.generateExcel(response, filterData.getPublicationDateStart(), filterData.getPublicationDateEnd(),company);
+                companyService.generateExcel(response, filterData, company);
         	}
         }
         

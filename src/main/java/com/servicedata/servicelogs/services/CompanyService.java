@@ -3,6 +3,7 @@ package com.servicedata.servicelogs.services;
 import com.servicedata.servicelogs.excelgenerators.CompanyExcelGenerator;
 import com.servicedata.servicelogs.exceptions.CompanyNotFoundException;
 import com.servicedata.servicelogs.forms.CompanyFilterData;
+import com.servicedata.servicelogs.forms.ConservationLogFilterData;
 import com.servicedata.servicelogs.models.Company;
 import com.servicedata.servicelogs.models.ConservationLog;
 import com.servicedata.servicelogs.models.Machine;
@@ -26,11 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,7 +39,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final MachineRepository machineRepository;
     private final SystemUserRepository systemUserRepository;
-	private final ConservationLogRepository conservationLogRepository;
+	private final ConservationLogService conservationLogService;
     
 
     public Company findCompanyById(long companyId) {
@@ -80,13 +79,12 @@ public class CompanyService {
     }
     
     public void generateExcel(HttpServletResponse response,     
-			    LocalDate publicationDateStart,
-			    LocalDate publicationDateEnd,
-			    Company company) {    	
+    						  ConservationLogFilterData filterData,
+    						  Company company) {    	
     	SortedMap<Machine, List<ConservationLog>> logs = new TreeMap<>();
     	List<Machine> machinesL = machineRepository.findAllByCompany(company);
     	for (Machine machine : machinesL) {
-    		List <ConservationLog> log = conservationLogRepository.findAllByMachine(machine);
+    		List <ConservationLog> log = conservationLogService.filteredConservationLogExcel(machine, filterData);
     		logs.put(machine, log);
     	}
     	CompanyExcelGenerator file = new CompanyExcelGenerator(company, logs);
