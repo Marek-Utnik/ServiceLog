@@ -32,3 +32,14 @@ spring:
     basename: languages/messages
     encoding: UTF-8
     fallback-to-system-locale: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
